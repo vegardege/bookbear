@@ -62,7 +62,7 @@ async function* loadAllAuthorWorkPairs(): AsyncGenerator<string, void, void> {
 /**
  * Creates a CSV file with all author-work pairs.
  */
-async function createAuthorWorkFile(): Promise<void> {
+export async function createAuthorWorkFile(): Promise<void> {
   console.log("Creating author-work file");
   const fn = `author-work-${getTimestamp()}.csv`;
   const stream = createWriteStream(fn, { encoding: "utf-8" });
@@ -74,5 +74,3 @@ async function createAuthorWorkFile(): Promise<void> {
   stream.end();
   console.log(`Created file ${fn}`);
 }
-
-createAuthorWorkFile();
