@@ -1,9 +1,15 @@
 /**
  * CLI entry point for the data pipeline scripts.
  */
+import { aggregateToCsv } from "./aggregate.js";
 import { loadChunksToCSV } from "./load-chunks.js";
 import { loadPagesToCSV } from "./load-pages.js";
-import { getNewPath, getLatestAuthors, getLatestWorks } from "./storage.js";
+import {
+  getNewPath,
+  getMostRecentFilename,
+  getLatestAuthors,
+  getLatestWorks,
+} from "./storage.js";
 
 async function authorships(): Promise<void> {
   const filename = getNewPath("authorships");
@@ -61,6 +67,28 @@ async function authors(): Promise<void> {
   await loadChunksToCSV(filename, query, authors, 1000);
 }
 
+async function aggregate(db_path: string): Promise<void> {
+  const filename = getNewPath("aggregate", "json");
+  const authors_path = getMostRecentFilename("authors");
+  const works_path = getMostRecentFilename("works");
+  const authorships_path = getMostRecentFilename("authorships");
+  const notables_path = getMostRecentFilename("notables");
+
+  if (!authors_path || !works_path || !authorships_path || !notables_path) {
+    console.error("Missing required CSV files for aggregation.");
+    return;
+  }
+
+  aggregateToCsv(
+    filename,
+    authors_path,
+    works_path,
+    authorships_path,
+    notables_path,
+    db_path
+  );
+}
+
 async function works(): Promise<void> {
   const filename = getNewPath("works");
   const works = getLatestWorks();
@@ -68,22 +96,27 @@ async function works(): Promise<void> {
         SELECT ?work ?workLabel ?slug ?publicationDate
         WHERE
         {
+            # Use VALUES to limit the number of works in the query
             VALUES ?work {
                 {{chunk}}  # Placeholder for chunk of works
             }
         
+            # Get publication date if available
             OPTIONAL {
                 ?work wdt:P577 ?publicationDate .
             }
             
+            # Get the works's label in English
             ?work rdfs:label ?workLabel .
             FILTER(LANG(?workLabel) = "en")
             
+            # Get the English Wikipedia page for the work, if available
             OPTIONAL {
                 ?article schema:about ?work ;
                         schema:name ?title ;
                         schema:isPartOf <https://en.wikipedia.org/> .
                 
+                # Create a slug from the title
                 BIND(REPLACE(?title, " ", "_") AS ?slug)
             }
         }
@@ -107,6 +140,9 @@ switch (args[0]) {
   case "works":
     await works();
     break;
+  case "aggregate":
+    await aggregate(args[1]);
+    break;
   default:
     console.error(`Unknown command: ${args[0]}`);
     console.error("Usage: node run script <command>");
@@ -115,7 +151,8 @@ switch (args[0]) {
       "  authorships - Create a CSV file with all author-work pairs" +
         "  notables - Create a CSV file with all notable author-work pairs" +
         "  authors - Create a CSV file with detailed author data" +
-        "  works - Create a CSV file with detailed works data"
+        "  works - Create a CSV file with detailed works data" +
+        "  aggregate /path/to/db.duckdb - Aggregate the data in the database"
     );
     break;
 }
