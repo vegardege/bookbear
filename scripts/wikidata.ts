@@ -34,7 +34,7 @@ export async function executeSparqlQuery(query: string): Promise<string> {
     headers: WIKIDATA_API_HEADERS,
   });
   if (res.status === 429) {
-    const retryAfter = parseInt(res.headers["Retry-After"], 10);
+    const retryAfter = parseInt(res.headers["retry-after"], 10);
     throw new TooManyRequestsError(retryAfter);
   }
   if (res.status !== 200) {

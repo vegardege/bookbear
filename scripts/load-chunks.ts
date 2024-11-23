@@ -1,5 +1,6 @@
 /**
- * Loads CSV data from Wikidata using the limit-offset pagination method.
+ * Loads CSV data from Wikidata using the chunk method. Unlike pagination, this
+ * assumes we have a list of IDs we want to extract.
  */
 import { createWriteStream } from "fs";
 import { sleep } from "./utils.js";
@@ -8,15 +9,9 @@ import { executeSparqlQuery, handleWikidataError } from "./wikidata.js";
 /**
  * Loads a single set of pages from Wikidata.
  */
-async function loadPages(
-  query: string,
-  limit: number,
-  offset: number
-): Promise<string> {
+async function loadChunk(query: string, ids: string[]): Promise<string> {
   let data = await executeSparqlQuery(
-    `${query}
-    LIMIT ${limit}
-    OFFSET ${offset}`
+    query.replace("{{chunk}}", ids.map((id) => `wd:${id}`).join(" "))
   );
 
   // Skip the header line and remove the repeated base URL,
@@ -33,23 +28,26 @@ async function loadPages(
  * This is an infrequently run batch operation, so we are a bit kinder than
  * the documentation requires. Shouldn't take too long to run anyway.
  */
-async function* loadAllPages(
+async function* loadAllChunks(
   query: string,
-  limit: number
+  ids: string[],
+  chunkSize: number
 ): AsyncGenerator<string, void, void> {
   console.log("Loading from Wikidata");
 
   let offset = 0;
 
-  while (true) {
+  while (offset < ids.length) {
     try {
-      console.log(`- Loading rows ${offset}-${offset + limit}`);
-      const data = await loadPages(query, limit, offset);
+      const chunk = ids.slice(offset, offset + chunkSize);
+      console.log(`- Loading rows ${offset}-${offset + chunk.length}`);
+
+      const data = await loadChunk(query, chunk);
       if (data.length === 0) {
         break; // No more data
       }
       yield data;
-      offset += limit;
+      offset += chunkSize;
 
       await sleep(5);
     } catch (error) {
@@ -63,8 +61,8 @@ async function* loadAllPages(
 /**
  * Creates a CSV file with the results of a SPARQL query from Wikidata.
  *
- * The function uses pagination with limit and offset to split a big
- * query in smaller parts.
+ * The function uses chunk loading with a set of ids in each query to
+ * split a big query in smaller parts.
  *
  * Note that the function will stream data to a file. If it fails in the
  * middle of the process, the file will be incomplete. The caller is
@@ -72,21 +70,23 @@ async function* loadAllPages(
  *
  * @param filename - The name of the output file.
  * @param query - The SPARQL query to execute.
- * @param limit - The number of rows to load in each request.
+ * @param ids - The list of IDs to query for.
+ * @param chunkSize - The number of IDs to load in each request.
  *
  * @returns A promise that resolves when the file is created.
  *
  * @throws {Error} If the query fails or the file cannot be created.
  */
-export async function loadPagesToCSV(
+export async function loadChunksToCSV(
   filename: string,
   query: string,
-  limit: number
+  ids: string[],
+  chunkSize: number
 ): Promise<void> {
   console.log("Creating output file");
   const stream = createWriteStream(filename, { encoding: "utf-8" });
 
-  for await (const chunk of loadAllPages(query, limit)) {
+  for await (const chunk of loadAllChunks(query, ids, chunkSize)) {
     stream.write(chunk + "\r\n");
   }
   stream.end();
