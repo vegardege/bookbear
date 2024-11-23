@@ -2,10 +2,10 @@
  * CLI entry point for the data pipeline scripts.
  */
 import { loadPagesToCSV } from "./load-pages.js";
-import { getTimestamp } from "./utils.js";
+import { getNewPath } from "./storage.js";
 
 async function authorships(): Promise<void> {
-  const filename = `authorships-${getTimestamp()}.csv`;
+  const filename = getNewPath("authorships");
   const query = `
         SELECT ?author ?work
         WHERE {
@@ -17,7 +17,7 @@ async function authorships(): Promise<void> {
 }
 
 async function notables(): Promise<void> {
-  const filename = `notables-${getTimestamp()}.csv`;
+  const filename = getNewPath("notables");
   const query = `
         SELECT ?author ?work
         WHERE {

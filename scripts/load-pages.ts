@@ -86,7 +86,6 @@ export async function loadPagesToCSV(
   console.log("Creating output file");
   const stream = createWriteStream(filename, { encoding: "utf-8" });
 
-  stream.write("author,work\n");
   for await (const chunk of loadAllPages(query, limit)) {
     stream.write(chunk + "\r\n");
   }
