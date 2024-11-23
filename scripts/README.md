@@ -19,7 +19,9 @@ npm run scripts authorships
 npm run scripts notables
 
 # Second, hydrate the author and work objects with data
+npm run scripts authors
+npm run scripts works
 
 # Third, aggregate all files into one
-
+npm run scripts aggregate /path/to/your/pvduck.duckdb
 ```
