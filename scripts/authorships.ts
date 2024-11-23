@@ -1,14 +1,17 @@
+/**
+ * Defined the relationship between authors and their works.
+ *
+ * This script only gets the Q codes of the authors and works, the rest must be
+ * hydrated using separate scripts.
+ */
 import { executeSparqlQuery, handleWikidataError } from "./wikidata.js";
-import { sleep, getTimestamp } from "./utils.js";
+import { sleep } from "./utils.js";
 import { createWriteStream } from "fs";
 
 /**
  * Loads a single chunk of author-work pairs from Wikidata.
  */
-async function loadAuthorWorkPairs(
-  limit: number,
-  offset: number
-): Promise<string> {
+async function loadAuthorship(limit: number, offset: number): Promise<string> {
   let data = await executeSparqlQuery(`
           SELECT ?author ?work
           WHERE {
@@ -29,13 +32,13 @@ async function loadAuthorWorkPairs(
 }
 
 /**
- * Loads all author-work pairs from Wikidata in chunks.
+ * Loads all authorships from Wikidata in chunks.
  *
  * This is an infrequently run batch operation, so we are a bit kinder than
  * the documentation requires. Shouldn't take too long to run anyway.
  */
-async function* loadAllAuthorWorkPairs(): AsyncGenerator<string, void, void> {
-  console.log("Loading all author-work pairs from Wikidata");
+async function* loadAllAuthorships(): AsyncGenerator<string, void, void> {
+  console.log("Loading all authorships from Wikidata");
 
   const limit = 10_000;
   let offset = 0;
@@ -43,7 +46,7 @@ async function* loadAllAuthorWorkPairs(): AsyncGenerator<string, void, void> {
   while (true) {
     try {
       console.log(`- Loading rows ${offset}-${offset + limit}`);
-      const data = await loadAuthorWorkPairs(limit, offset);
+      const data = await loadAuthorship(limit, offset);
       if (data.length === 0) {
         break; // No more data
       }
@@ -62,15 +65,14 @@ async function* loadAllAuthorWorkPairs(): AsyncGenerator<string, void, void> {
 /**
  * Creates a CSV file with all author-work pairs.
  */
-export async function createAuthorWorkFile(): Promise<void> {
-  console.log("Creating author-work file");
-  const fn = `author-work-${getTimestamp()}.csv`;
-  const stream = createWriteStream(fn, { encoding: "utf-8" });
+export async function createAuthorWorkFile(filename: string): Promise<void> {
+  console.log("Creating authorships file");
+  const stream = createWriteStream(filename, { encoding: "utf-8" });
 
   stream.write("author,work\n");
-  for await (const chunk of loadAllAuthorWorkPairs()) {
+  for await (const chunk of loadAllAuthorships()) {
     stream.write(chunk + "\n");
   }
   stream.end();
-  console.log(`Created file ${fn}`);
+  console.log(`Created file ${filename}`);
 }
