@@ -56,6 +56,7 @@ async function getWorks(
     publicationDate: row[3] ? formatDate(new Date(row[3])) : undefined,
     views: 0,
     notable: false,
+    formOfCreativeWork: row[4],
   }));
 
   // Add pageviews from the provided duckdb database

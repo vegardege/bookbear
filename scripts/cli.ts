@@ -81,6 +81,40 @@ async function authors(): Promise<void> {
   await loadChunksToCSV(filename, query, authors, 1000);
 }
 
+async function works(): Promise<void> {
+  const filename = getNewPath("works");
+  const works = getLatestWorks();
+  const query = `
+    SELECT
+        ?work ?workLabel ?slug ?publicationDate
+        (MIN(?formLabel) AS ?formOfCreativeWorkLabel)
+    WHERE {
+        VALUES ?work {
+            {{chunk}}  # Placeholder
+        }
+
+        OPTIONAL { ?work wdt:P577 ?publicationDate. }
+
+        ?work rdfs:label ?workLabel.
+        FILTER(LANG(?workLabel) = "en")
+
+        OPTIONAL {
+            ?article schema:about ?work ;
+                    schema:name ?title ;
+                    schema:isPartOf <https://en.wikipedia.org/>.
+            BIND(REPLACE(?title, " ", "_") AS ?slug)
+        }
+
+        OPTIONAL {
+            ?work wdt:P7937 ?form.
+            ?form rdfs:label ?formLabel.
+            FILTER(LANG(?formLabel) = "en")
+        }
+    }
+    GROUP BY ?work ?workLabel ?slug ?publicationDate`;
+  await loadChunksToCSV(filename, query, works, 1000);
+}
+
 async function aggregate(db_path: string): Promise<void> {
   const filename = getNewPath("aggregate", "json");
   const authors_path = getMostRecentFilename("authors");
@@ -101,41 +135,6 @@ async function aggregate(db_path: string): Promise<void> {
     notables_path,
     db_path
   );
-}
-
-async function works(): Promise<void> {
-  const filename = getNewPath("works");
-  const works = getLatestWorks();
-  const query = `
-        SELECT ?work ?workLabel ?slug ?publicationDate
-        WHERE
-        {
-            # Use VALUES to limit the number of works in the query
-            VALUES ?work {
-                {{chunk}}  # Placeholder for chunk of works
-            }
-        
-            # Get publication date if available
-            OPTIONAL {
-                ?work wdt:P577 ?publicationDate .
-            }
-            
-            # Get the works's label in English
-            ?work rdfs:label ?workLabel .
-            FILTER(LANG(?workLabel) = "en")
-            
-            # Get the English Wikipedia page for the work, if available
-            OPTIONAL {
-                ?article schema:about ?work ;
-                        schema:name ?title ;
-                        schema:isPartOf <https://en.wikipedia.org/> .
-                
-                # Create a slug from the title
-                BIND(REPLACE(?title, " ", "_") AS ?slug)
-            }
-        }
-    `;
-  await loadChunksToCSV(filename, query, works, 1000);
 }
 
 // Entry point for CLI

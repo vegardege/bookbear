@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col gap-8">
+        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col gap-8">
           <header className="flex flex-row justify-center mt-8">
             <Link href="/">
               <Image src="/bookbear.png" alt="Book Bear" width={100} height={100} />
