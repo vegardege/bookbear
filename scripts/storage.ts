@@ -27,6 +27,7 @@ export function getLatestAuthors(): string[] {
  */
 export function getLatestWorks(): string[] {
   const csvPath = getMostRecentFilename("authorships");
+  console.log(csvPath);
   return [...new Set(readCSV(csvPath).map((row) => row[1]))];
 }
 

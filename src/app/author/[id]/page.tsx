@@ -51,18 +51,17 @@ export default async function AuthorPage({
   }
 
   const workGroups = groupAndSortWorks(author.works);
+  const maxViews = Math.max(...author.works.map((work) => work.views || 0), 1);
 
   return (
     <section aria-label="Author" className="w-full">
       <h1>{author.name}</h1>
       <p>{author.description}</p>
-      <h2>Notable Work</h2>
-      <BookTable works={author.works.filter((work) => work.notable)} />
       {[...workGroups.entries()].map(([name, works]) => {
         return (
           <div key={name}>
             <h2>{capitalizeWords(name)}</h2>
-            <BookTable works={works} />
+            <BookTable works={works} maxViews={maxViews} />
           </div>
         );
       })}
