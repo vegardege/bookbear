@@ -45,7 +45,7 @@ export default async function AuthorPage({
 }) {
   const { id } = await params;
   const database = getDatabase();
-  const author = database.get(id);
+  const author = database.get(decodeURIComponent(id));
   if (!author) {
     return <div>Author not found</div>;
   }
