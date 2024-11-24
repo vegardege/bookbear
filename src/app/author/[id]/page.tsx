@@ -1,5 +1,9 @@
 import { getDatabase, Work } from '@/lib/dataStore';
 
+/**
+ * Convenience function to sort works by publication date.
+ * If the publication date is not available, it will be sorted to the end.
+ */
 function sortByDate(a: Work, b: Work): number {
   if (a.publicationDate && b.publicationDate) {
     return a.publicationDate.localeCompare(b.publicationDate);
@@ -13,6 +17,11 @@ function sortByDate(a: Work, b: Work): number {
   return 0;
 }
 
+/**
+ * Author page component.
+ * 
+ * This page contains information about the author and their works.
+ */
 export default async function AuthorPage({
   params,
 }: {
