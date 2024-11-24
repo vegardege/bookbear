@@ -16,9 +16,11 @@ async function authorships(): Promise<void> {
   const query = `
     SELECT ?author ?work
     WHERE {
-        ?work   wdt:P31 wd:Q7725634 ; # Instance of 'literary work'
-                wdt:P50 ?author .     # which has a registered author
-        ?author wdt:P31 wd:Q5 .       # who is a human being
+        ?work   wdt:P31 ?workType ;     # Literary or dramatic work
+                wdt:P50 ?author .       # which has a registered author
+        ?author wdt:P31 wd:Q5 .         # who is a human being
+
+        VALUES ?workType { wd:Q7725634 wd:Q116476516 }
     }`;
   await loadPagesToCSV(filename, query, 10_000);
 }
@@ -28,9 +30,11 @@ async function notables(): Promise<void> {
   const query = `
     SELECT ?author ?work
     WHERE {
-        ?work wdt:P31 wd:Q7725634 .  # Instance of 'literary work'
+        ?work wdt:P31 ?workType .    # Literary or dramatic work
         ?author wdt:P800 ?work .     # which is notable for an author
         ?author wdt:P31 wd:Q5 .      # who is a human being
+
+        VALUES ?workType { wd:Q7725634 wd:Q116476516 }
     }`;
   await loadPagesToCSV(filename, query, 10_000);
 }
@@ -39,7 +43,7 @@ async function authors(): Promise<void> {
   const filename = getNewPath("authors");
   const authors = getLatestAuthors();
   const query = `
-    SELECT ?author ?authorLabel ?authorDescription ?slug
+    SELECT ?author ?authorLabel ?authorDescription ?slug ?isAuthor
     WHERE
     {
         # Use VALUES to limit the number of authors in the query
@@ -55,14 +59,24 @@ async function authors(): Promise<void> {
         # Create a slug from the title
         BIND(REPLACE(?title, " ", "_") AS ?slug)
         
-        # Get the author's label and optionally a description in English
+        # Get the author's label (name)
         ?author rdfs:label ?authorLabel .
         FILTER(LANG(?authorLabel) = "en")
 
+        # Include an optional description in English, separating authors
+        # with the same name
         OPTIONAL {
             ?author schema:description ?authorDescription .
             FILTER(LANG(?authorDescription) = "en")
         }
+
+        # Check if the person is a writer by occupation
+        BIND(EXISTS {
+            ?author wdt:P106 ?occupation .
+            FILTER(?occupation IN (
+                wd:Q482980, wd:Q49757, wd:Q6625963, wd:Q214917
+            ))
+        } AS ?isAuthor)
     }`;
   await loadChunksToCSV(filename, query, authors, 1000);
 }

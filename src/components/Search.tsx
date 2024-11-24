@@ -4,7 +4,6 @@ import React from 'react';
 import {useCombobox} from 'downshift'
 import { useRouter } from 'next/navigation';
 import { SearchResult } from '@/lib/search';
-import Link from 'next/link';
 
 /**
  * Search component using `downshift` for autocompletion.
@@ -50,6 +49,7 @@ export default function Search() {
                         slug: '',
                         views: 0,
                         score: 0,
+                        isAuthor: false,
                     });
                 }
                 setItems(data);

@@ -8,6 +8,7 @@ export type Author = {
   slug: string;
   views: number;
   works: Work[];
+  isAuthor: boolean;
 };
 
 export type Work = {

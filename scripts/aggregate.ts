@@ -22,6 +22,7 @@ async function getAuthors(
     slug: row[3],
     views: 0,
     works: [],
+    isAuthor: row[4] === "true",
   }));
 
   // Add pageviews from the provided duckdb database
