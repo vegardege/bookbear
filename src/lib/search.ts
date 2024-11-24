@@ -1,12 +1,11 @@
 import Fuse, { FuseResult } from "fuse.js";
-import { getDatabase } from "@/lib/dataStore";
+import { getDatabase } from "@/lib/database";
 
 interface Searchable {
   name: string;
   description: string;
   slug: string;
   views: number;
-  isAuthor: boolean;
 }
 
 export interface SearchResult extends Searchable {
@@ -42,7 +41,6 @@ export function search(
       slug: result.item.slug,
       views: result.item.views,
       score: result.score || 0,
-      isAuthor: result.item.isAuthor,
     }));
 }
 
@@ -58,7 +56,6 @@ function indexSearch(): Fuse<Searchable> {
     description: author.description,
     slug: author.slug,
     views: author.views,
-    isAuthor: author.isAuthor,
   }));
 
   return new Fuse(searchResults, {
@@ -100,17 +97,6 @@ function sortResults(
     }
     if (!aName.startsWith(query) && bName.startsWith(query)) {
       return 1;
-    }
-
-    // If the scores are very similar, we prioritize authors with more views
-    if (Math.abs(a.score - b.score) < 0.03) {
-      if (a.item.isAuthor && !b.item.isAuthor) {
-        return -1;
-      }
-      if (!a.item.isAuthor && b.item.isAuthor) {
-        return 1;
-      }
-      return b.item.views - a.item.views;
     }
 
     // Otherwise we score by Fuse's ranking

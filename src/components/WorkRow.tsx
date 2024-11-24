@@ -1,6 +1,6 @@
 "use client";
 
-import { Work } from "@/lib/dataStore";
+import { Work } from "@/lib/database";
 import { useState } from "react";
 
 export default function WorkRow({
@@ -10,7 +10,7 @@ export default function WorkRow({
   work: Work;
   maxViews: number;
 }) {
-  let [hover, setHover] = useState(false);
+  const [hover, setHover] = useState(false);
 
   return (
     <tr
@@ -38,7 +38,10 @@ export default function WorkRow({
           <div
             className="h-2 rounded"
             style={{
-              width: `${((work.views ?? 0) / maxViews) * 100 || 1}%`,
+              width: `${Math.max(
+                1,
+                ((work.views ?? 0) / maxViews) * 100 || 0
+              )}%`,
               backgroundColor: "#844826",
             }}
           ></div>

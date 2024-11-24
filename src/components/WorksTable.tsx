@@ -1,4 +1,4 @@
-import { Work } from "@/lib/dataStore";
+import { Work } from "@/lib/database";
 import BookRow from "./WorkRow";
 
 export default function WorksTable({

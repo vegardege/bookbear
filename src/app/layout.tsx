@@ -3,6 +3,7 @@ import "./globals.css";
 import Image from "next/image";
 import Link from "next/link";
 import Search from "@/components/Search";
+import logo from "../../public/bookbear.png";
 
 export const metadata: Metadata = {
   title: "Book Bear",
@@ -21,11 +22,11 @@ export default function RootLayout({
           <header className="flex flex-row justify-center mt-8">
             <Link href="/">
               <Image
-                src="/bookbear.png"
+                src={logo}
                 alt="Book Bear"
                 width={120}
                 height={120}
-                priority={true}
+                priority
               />
             </Link>
           </header>

@@ -49,7 +49,6 @@ export default function Search() {
               slug: "",
               views: 0,
               score: 0,
-              isAuthor: false,
             });
           }
           setItems(data);
@@ -78,11 +77,11 @@ export default function Search() {
   return (
     <form action="/search" method="GET" className="relative">
       <div className="w-full flex flex-col gap-1">
-        <div className="flex flex-row rounded-sm items-center shadow-sm bg-white gap-0.5">
+        <div className="flex flex-row rounded-md items-center shadow-sm bg-white gap-0.5">
           <input
             name="q"
             placeholder="Search for an author"
-            className="w-full p-2 bg-transparent rounded-sm"
+            className="w-full p-2 bg-transparent rounded-md"
             {...getInputProps()}
           />
           <noscript>

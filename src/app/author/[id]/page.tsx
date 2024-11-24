@@ -1,6 +1,6 @@
 import Container from "@/components/Container";
 import WorksTable from "@/components/WorksTable";
-import { getDatabase, Work } from "@/lib/dataStore";
+import { getDatabase, Work } from "@/lib/database";
 
 /**
  * Group works by their form of creative work and sort them by the number
@@ -57,9 +57,6 @@ export default async function AuthorPage({
   return (
     <section aria-label="Author" className="w-full">
       <h1>{author.name}</h1>
-      <Container>
-        <p className="p-4">{author.description}</p>
-      </Container>
       {[...workGroups.entries()].map(([name, works]) => {
         return (
           <div key={name}>

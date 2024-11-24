@@ -65,7 +65,7 @@ async function getWorks(
   );
   for (const work of works) {
     const views = pageviews.get(work.slug);
-    if (views) {
+    if (work.slug && views) {
       work.views = views;
     }
   }
