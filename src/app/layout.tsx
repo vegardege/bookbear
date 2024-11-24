@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Image from 'next/image'
 import Link from "next/link";
 import Search from "@/components/Search";
 
@@ -17,9 +18,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <h1><Link href="/">Book Bear</Link></h1>
-        <Search />
-        {children}
+        <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col gap-8">
+          <header className="flex flex-row justify-center mt-8">
+            <Link href="/">
+              <Image src="/bookbear.png" alt="Book Bear" width={100} height={100} />
+            </Link>
+          </header>
+          <main className="flex flex-col gap-4 justify-center">
+            <section aria-label="Search" className="w-full">
+              <Search />
+            </section>
+            {children}
+          </main>
+          <footer className="flex flex-row justify-center">
+            <p>Powered by Wikidata</p>
+          </footer>
+        </div>
       </body>
     </html>
   );

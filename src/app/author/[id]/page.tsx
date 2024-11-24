@@ -35,7 +35,7 @@ const { id } = await params;
   }
 
   return (
-    <div>
+    <section aria-label="Author" className="w-full">
       <h1>{author.name}</h1>
       <p>{author.description}</p>
       <h2>Notable Work</h2>
@@ -61,6 +61,6 @@ const { id } = await params;
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }

@@ -4,6 +4,7 @@ import React from 'react';
 import {useCombobox} from 'downshift'
 import { useRouter } from 'next/navigation';
 import { SearchResult } from '@/lib/search';
+import Link from 'next/link';
 
 /**
  * Search component using `downshift` for autocompletion.
@@ -22,6 +23,8 @@ export default function Search() {
         getInputProps,
         highlightedIndex,
         getItemProps,
+        inputValue,
+        selectItem,
     } = useCombobox({
         items,
         itemToString(item) {
@@ -34,20 +37,47 @@ export default function Search() {
             };
       
             // Fetch search results when input changes
-            fetch('/api/search?q=' + encodeURIComponent(inputValue))
+            const qs = new URLSearchParams();
+            qs.set('q', encodeURIComponent(inputValue));
+            qs.set('limit', '5');
+            fetch(`/api/search?${qs.toString()}`)
               .then((res) => res.json())
               .then((data: SearchResult[]) => {
+                if (data.length >= 5) {
+                    data.push({
+                        name: 'See all results',
+                        description: '',
+                        slug: '',
+                        views: 0,
+                        score: 0,
+                    });
+                }
                 setItems(data);
               });
           },
           onSelectedItemChange({ selectedItem }) {
+            if (!selectedItem) {
+                return;
+            }
+
+            // Hard coded exception, expand search
+            if (selectedItem.name === 'See all results') {
+                router.push(`/search?q=${inputValue}`);
+                selectItem(null);
+                setItems([]);
+                return;
+            }
+
+            // Navigate to author page
             router.push(`/author/${selectedItem.slug}`);
+            selectItem(null);
+            setItems([]);
           },
     })
 
     return (
-        <form action="/search" method="GET">
-            <div className="w-72 flex flex-col gap-1">
+        <form action="/search" method="GET" className="relative">
+            <div className="w-full flex flex-col gap-1">
                 <div className="flex shadow-sm bg-white gap-0.5">
                     <input
                         name="q"
@@ -61,7 +91,7 @@ export default function Search() {
                 </div>
             </div>
             <ul
-                className={`absolute w-72 bg-white mt-1 shadow-md max-h-80 overflow-scroll p-0 z-10 ${
+                className={`absolute w-full bg-white mt-1 shadow-md max-h-96 overflow-scroll p-0 z-10 ${
                 !(isOpen && items.length) && 'hidden'
                 }`}
                 {...getMenuProps()}
@@ -70,8 +100,9 @@ export default function Search() {
                     <li
                     className={`
                         py-2 px-3 shadow-sm flex flex-col
-                        ${highlightedIndex === index ? 'cursor-pointer bg-blue-50' : ''}
+                        ${highlightedIndex === index ? 'cursor-pointer' : ''}
                     `}
+                    style={highlightedIndex === index ? { backgroundColor: '#f6d6a8' } : {}}
                     key={item.slug}
                     {...getItemProps({item, index})}
                     >
