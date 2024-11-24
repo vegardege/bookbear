@@ -4,25 +4,9 @@
  */
 import fs from "fs";
 import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
+import { Author, Work } from "@/lib/dataStore.js";
 import { readCSV } from "./storage";
-
-type Author = {
-  qcode: string;
-  name: string;
-  description: string;
-  slug: string;
-  views: number;
-  works: Work[];
-};
-
-type Work = {
-  qcode: string;
-  title: string;
-  slug?: string;
-  publicationDate?: Date;
-  views?: number;
-  notable: boolean;
-};
+import { formatDate } from "./utils.js";
 
 /**
  * Read author structs from the metadata CSV file.
@@ -68,7 +52,7 @@ async function getWorks(
     qcode: row[0],
     title: row[1],
     slug: row[2],
-    publicationDate: row[3] ? new Date(row[3]) : undefined,
+    publicationDate: row[3] ? formatDate(new Date(row[3])) : undefined,
     views: 0,
     notable: false,
   }));
@@ -145,6 +129,11 @@ async function associateAuthorsAndWorks(
     const work = works.get(workQcode);
 
     if (author && work) {
+      // Ignore duplicates
+      if (author.works.some((w) => w.qcode === work.qcode)) {
+        continue;
+      }
+      // Otherwise, add the work to the author
       author.works.push(work);
       work.notable = notables.has(work.qcode);
     }

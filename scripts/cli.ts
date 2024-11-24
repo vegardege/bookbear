@@ -2,8 +2,8 @@
  * CLI entry point for the data pipeline scripts.
  */
 import { aggregateToCsv } from "./aggregate.js";
-import { loadChunksToCSV } from "./load-chunks.js";
-import { loadPagesToCSV } from "./load-pages.js";
+import { loadChunksToCSV } from "./loadChunks.js";
+import { loadPagesToCSV } from "./loadPages.js";
 import {
   getNewPath,
   getMostRecentFilename,

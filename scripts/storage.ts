@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 import { parse } from "csv-parse/sync";
+import { getTimestamp } from "./utils.js";
 
 /**
  * Request a path for a new CSV file in a given group.
@@ -79,23 +80,4 @@ function getDataDir(): string {
     fs.mkdirSync(bookbearDir, { recursive: true });
   }
   return bookbearDir;
-}
-
-/**
- * Get the current timestamp in the format YYYYMMDD-HHMMSS.
- */
-function getTimestamp(): string {
-  const now = new Date();
-
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
-  const year = now.getFullYear();
-  const month = pad(now.getMonth() + 1); // getMonth() is 0-based
-  const day = pad(now.getDate());
-
-  const hours = pad(now.getHours());
-  const minutes = pad(now.getMinutes());
-  const seconds = pad(now.getSeconds());
-
-  return `${year}${month}${day}-${hours}${minutes}${seconds}`;
 }
