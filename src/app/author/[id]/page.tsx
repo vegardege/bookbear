@@ -1,4 +1,5 @@
-import BookTable from "@/components/BookTable";
+import Container from "@/components/Container";
+import WorksTable from "@/components/WorksTable";
 import { getDatabase, Work } from "@/lib/dataStore";
 
 /**
@@ -56,12 +57,16 @@ export default async function AuthorPage({
   return (
     <section aria-label="Author" className="w-full">
       <h1>{author.name}</h1>
-      <p>{author.description}</p>
+      <Container>
+        <p className="p-4">{author.description}</p>
+      </Container>
       {[...workGroups.entries()].map(([name, works]) => {
         return (
           <div key={name}>
             <h2>{capitalizeWords(name)}</h2>
-            <BookTable works={works} maxViews={maxViews} />
+            <Container>
+              <WorksTable works={works} maxViews={maxViews} />
+            </Container>
           </div>
         );
       })}

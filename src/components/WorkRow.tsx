@@ -1,11 +1,9 @@
 "use client";
 
 import { Work } from "@/lib/dataStore";
-import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 
-export default function BookRow({
+export default function WorkRow({
   work,
   maxViews,
 }: {
@@ -28,14 +26,14 @@ export default function BookRow({
       }}
       className={`${hover ? "bg-[#efba6f] cursor-pointer" : "bg-[#f5d5a7]"}`}
     >
-      <td className="p-2 w-16">
+      <td className="px-2 py-3 w-16">
         <div className="flex flex-row justify-center">
           {work.publicationDate?.substring(0, 4) ?? "–"}
         </div>
       </td>
-      <td className="p-2 pr-4">
-        <div className="flex flex-col gap-1 justify-center">
-          <span className="m-0">{work.title}</span>
+      <td className="px-1 py-3 pr-4">
+        <div className="flex flex-col gap-1 justify-center h-full">
+          <span className="m-0 leading-none">{work.title}</span>
           <br />
           <div
             className="h-2 rounded"
@@ -46,7 +44,7 @@ export default function BookRow({
           ></div>
         </div>
       </td>
-      <td className="p-2 w-16">
+      <td className="px-2 py-3 w-16">
         {work.notable && (
           <div
             className="flex flex-row justify-center"

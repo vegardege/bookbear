@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Image from 'next/image'
+import Image from "next/image";
 import Link from "next/link";
 import Search from "@/components/Search";
 
@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   title: "Book Bear",
   description: "Browse authors and their works",
 };
-
 
 export default function RootLayout({
   children,
@@ -21,7 +20,13 @@ export default function RootLayout({
         <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col gap-8">
           <header className="flex flex-row justify-center mt-8">
             <Link href="/">
-              <Image src="/bookbear.png" alt="Book Bear" width={100} height={100} />
+              <Image
+                src="/bookbear.png"
+                alt="Book Bear"
+                width={120}
+                height={120}
+                priority={true}
+              />
             </Link>
           </header>
           <main className="flex flex-col gap-4 justify-center">
