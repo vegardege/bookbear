@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Link from "next/link";
+import Search from "@/components/Search";
 
 export const metadata: Metadata = {
   title: "Book Bear",
   description: "Browse authors and their works",
 };
+
 
 export default function RootLayout({
   children,
@@ -14,11 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <h1><a href="/">Book Bear</a></h1>
-        <form action="/search" method="get">
-          <input type="text" name="q" placeholder="Search for an author..." />
-          <button type="submit">Search</button>
-        </form>
+        <h1><Link href="/">Book Bear</Link></h1>
+        <Search />
         {children}
       </body>
     </html>
