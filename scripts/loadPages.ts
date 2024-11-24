@@ -45,6 +45,8 @@ async function* loadAllPages(
     try {
       console.log(`- Loading rows ${offset}-${offset + limit}`);
       const data = await loadPages(query, limit, offset);
+      console.log(`- Received ${data.split("\r\n").length} rows`);
+
       if (data.length === 0) {
         break; // No more data
       }

@@ -4,7 +4,7 @@
  */
 import fs from "fs";
 import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
-import { Author, Work } from "@/lib/dataStore.js";
+import { Author, Work } from "@/lib/database.js";
 import { readCSV } from "./storage";
 import { formatDate } from "./utils.js";
 
@@ -22,7 +22,6 @@ async function getAuthors(
     slug: row[3],
     views: 0,
     works: [],
-    isAuthor: row[4] === "true",
   }));
 
   // Add pageviews from the provided duckdb database

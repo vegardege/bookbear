@@ -31,11 +31,12 @@ async function loadChunk(query: string, ids: string[]): Promise<string> {
 async function* loadAllChunks(
   query: string,
   ids: string[],
+  initialOffset: number,
   chunkSize: number
 ): AsyncGenerator<string, void, void> {
   console.log("Loading from Wikidata");
 
-  let offset = 0;
+  let offset = initialOffset;
 
   while (offset < ids.length) {
     try {
@@ -43,9 +44,8 @@ async function* loadAllChunks(
       console.log(`- Loading rows ${offset}-${offset + chunk.length}`);
 
       const data = await loadChunk(query, chunk);
-      if (data.length === 0) {
-        break; // No more data
-      }
+      console.log(`- Received ${data.split("\r\n").length} rows`);
+
       yield data;
       offset += chunkSize;
 
@@ -81,12 +81,16 @@ export async function loadChunksToCSV(
   filename: string,
   query: string,
   ids: string[],
+  initialOffset: number,
   chunkSize: number
 ): Promise<void> {
   console.log("Creating output file");
-  const stream = createWriteStream(filename, { encoding: "utf-8" });
+  console.log(`Extracting rows ${initialOffset}-${ids.length}`);
 
-  for await (const chunk of loadAllChunks(query, ids, chunkSize)) {
+  const stream = createWriteStream(filename, { encoding: "utf-8" });
+  const chunks = loadAllChunks(query, ids, initialOffset, chunkSize);
+
+  for await (const chunk of chunks) {
     stream.write(chunk + "\r\n");
   }
   stream.end();

@@ -19,7 +19,7 @@ export function getNewPath(group: string, extension: string = "csv"): string {
  */
 export function getLatestAuthors(): string[] {
   const csvPath = getMostRecentFilename("authorships");
-  return [...new Set(readCSV(csvPath).map((row) => row[0]))];
+  return [...new Set(readCSV(csvPath).map((row) => row[0]))].sort();
 }
 
 /**
@@ -27,8 +27,7 @@ export function getLatestAuthors(): string[] {
  */
 export function getLatestWorks(): string[] {
   const csvPath = getMostRecentFilename("authorships");
-  console.log(csvPath);
-  return [...new Set(readCSV(csvPath).map((row) => row[1]))];
+  return [...new Set(readCSV(csvPath).map((row) => row[1]))].sort();
 }
 
 /**

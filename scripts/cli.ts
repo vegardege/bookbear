@@ -18,11 +18,18 @@ async function authorships(): Promise<void> {
     WHERE {
         ?work   wdt:P31 ?workType ;     # Literary or dramatic work
                 wdt:P50 ?author .       # which has a registered author
-        ?author wdt:P31 wd:Q5 .         # who is a human being
+        
+        VALUES ?workType { wd:Q7725634 wd:Q116476516 wd:Q47461344 }
 
-        VALUES ?workType { wd:Q7725634 wd:Q116476516 }
+        # Must be an author, novelist, playwright, or poet
+        ?author p:P106 ?occupationStatement .
+        ?occupationStatement ps:P106 ?occupation .
+
+        FILTER ( 
+          ?occupation IN (wd:Q482980, wd:Q49757, wd:Q6625963, wd:Q214917)
+        )
     }`;
-  await loadPagesToCSV(filename, query, 10_000);
+  await loadPagesToCSV(filename, query, 100_000);
 }
 
 async function notables(): Promise<void> {
@@ -31,25 +38,35 @@ async function notables(): Promise<void> {
     SELECT ?author ?work
     WHERE {
         ?work wdt:P31 ?workType .    # Literary or dramatic work
-        ?author wdt:P800 ?work .     # which is notable for an author
-        ?author wdt:P31 wd:Q5 .      # who is a human being
 
-        VALUES ?workType { wd:Q7725634 wd:Q116476516 }
+        VALUES ?workType { wd:Q7725634 wd:Q116476516 wd:Q47461344 }
+
+        ?author wdt:P800 ?work ;     # which is notable for an author
+                p:P106 ?occupationStatement .
+        ?occupationStatement ps:P106 ?occupation .
+
+        FILTER ( 
+          ?occupation IN (wd:Q482980, wd:Q49757, wd:Q6625963, wd:Q214917)
+        )
     }`;
-  await loadPagesToCSV(filename, query, 10_000);
+  await loadPagesToCSV(filename, query, 100_000);
 }
 
-async function authors(): Promise<void> {
+async function authors(initialOffset: number): Promise<void> {
   const filename = getNewPath("authors");
   const authors = getLatestAuthors();
   const query = `
-    SELECT ?author ?authorLabel ?authorDescription ?slug ?isAuthor
+    SELECT ?author ?authorLabel ?authorDescription ?slug
     WHERE
     {
         # Use VALUES to limit the number of authors in the query
         VALUES ?author {
             {{chunk}}  # Placeholder for chunk of authors
         }
+
+        # Get the author's label (name)
+        ?author rdfs:label ?authorLabel .
+        FILTER(LANG(?authorLabel) = "en")
 
         # Get the English Wikipedia page for the author
         ?article schema:about ?author ;
@@ -58,10 +75,6 @@ async function authors(): Promise<void> {
         
         # Create a slug from the title
         BIND(REPLACE(?title, " ", "_") AS ?slug)
-        
-        # Get the author's label (name)
-        ?author rdfs:label ?authorLabel .
-        FILTER(LANG(?authorLabel) = "en")
 
         # Include an optional description in English, separating authors
         # with the same name
@@ -69,35 +82,33 @@ async function authors(): Promise<void> {
             ?author schema:description ?authorDescription .
             FILTER(LANG(?authorDescription) = "en")
         }
-
-        # Check if the person is a writer by occupation
-        BIND(EXISTS {
-            ?author wdt:P106 ?occupation .
-            FILTER(?occupation IN (
-                wd:Q482980, wd:Q49757, wd:Q6625963, wd:Q214917
-            ))
-        } AS ?isAuthor)
     }`;
-  await loadChunksToCSV(filename, query, authors, 1000);
+  await loadChunksToCSV(filename, query, authors, initialOffset, 10_000);
 }
 
-async function works(): Promise<void> {
+async function works(initialOffset: number): Promise<void> {
   const filename = getNewPath("works");
   const works = getLatestWorks();
   const query = `
     SELECT
-        ?work ?workLabel ?slug ?publicationDate
+        ?work ?workLabel ?slug 
+        (MIN(?publicationDate) AS ?minPublicationDate)
         (MIN(?formLabel) AS ?formOfCreativeWorkLabel)
     WHERE {
         VALUES ?work {
             {{chunk}}  # Placeholder
         }
 
-        OPTIONAL { ?work wdt:P577 ?publicationDate. }
-
+        # Get the work's label (name)
         ?work rdfs:label ?workLabel.
         FILTER(LANG(?workLabel) = "en")
 
+        # Get the publication date of the work if it exists
+        OPTIONAL {
+          ?work wdt:P577 ?publicationDate.
+        }
+
+        # Get the English Wikipedia page for the work if it exists
         OPTIONAL {
             ?article schema:about ?work ;
                     schema:name ?title ;
@@ -111,8 +122,8 @@ async function works(): Promise<void> {
             FILTER(LANG(?formLabel) = "en")
         }
     }
-    GROUP BY ?work ?workLabel ?slug ?publicationDate`;
-  await loadChunksToCSV(filename, query, works, 1000);
+    GROUP BY ?work ?workLabel ?slug`;
+  await loadChunksToCSV(filename, query, works, initialOffset, 10_000);
 }
 
 async function aggregate(db_path: string): Promise<void> {
@@ -148,10 +159,10 @@ switch (args[0]) {
     await notables();
     break;
   case "authors":
-    await authors();
+    await authors(args[1] ? parseInt(args[1]) : 0);
     break;
   case "works":
-    await works();
+    await works(args[1] ? parseInt(args[1]) : 0);
     break;
   case "aggregate":
     await aggregate(args[1]);
