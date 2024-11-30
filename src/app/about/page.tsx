@@ -2,6 +2,7 @@ import Container from "@/components/Container";
 import PopularityBar from "@/components/PopularityBar";
 import Star from "@/components/Star";
 import SubTitle from "@/components/SubTitle";
+import Link from "next/link";
 
 export default async function AboutPage() {
   return (
@@ -10,20 +11,22 @@ export default async function AboutPage() {
       <Container>
         <p>
           Book Bear is a wrapper around{" "}
-          <a href="https://wikidata.org/">Wikidata</a>. Popularity is based on
-          <a href="https://wikitech.wikimedia.org/wiki/Data_Platform/Data_Lake/Traffic/Pageviews">
-            {" "}
+          <Link href="https://wikidata.org/">Wikidata</Link>. Popularity is
+          based on{" "}
+          <Link href="https://wikitech.wikimedia.org/wiki/Data_Platform/Data_Lake/Traffic/Pageviews">
             pageviews data
-          </a>{" "}
+          </Link>{" "}
           from the Wikimedia project.
         </p>
         <p>
           Listed below are the rules used to extract data. Get in touch if you
           think the rules can be improved, but note that I explicitly exclude
           e.g. the generic{" "}
-          <a href="https://www.wikidata.org/wiki/Q36180">writer (Q36180)</a>{" "}
+          <Link href="https://www.wikidata.org/wiki/Q36180">
+            writer (Q36180)
+          </Link>{" "}
           because I want Book Bear to focus on fiction, poetry, and drama, not
-          all published works by politicians, scientists, and other non-fiction
+          on all published works.
         </p>
       </Container>
       <h3 className="text-xl my-4">Authors</h3>
@@ -32,42 +35,44 @@ export default async function AboutPage() {
         <ul className="list-disc ml-6">
           <li>
             Is registered as the{" "}
-            <a href="https://www.wikidata.org/wiki/Property:P50">
+            <Link href="https://www.wikidata.org/wiki/Property:P50">
               author (P50)
-            </a>{" "}
+            </Link>{" "}
             of at least one work in Wikidata.
           </li>
           <li>
             Has an{" "}
-            <a href="https://www.wikidata.org/wiki/Property:P106">
+            <Link href="https://www.wikidata.org/wiki/Property:P106">
               occupation (P106)
-            </a>{" "}
+            </Link>{" "}
             of on of the following:
             <ul className="list-disc ml-6 my-2">
               <li>
-                <a href="https://www.wikidata.org/wiki/Q482980">
+                <Link href="https://www.wikidata.org/wiki/Q482980">
                   Author (Q482980)
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://www.wikidata.org/wiki/Q49757">Poet (Q49757)</a>
+                <Link href="https://www.wikidata.org/wiki/Q49757">
+                  Poet (Q49757)
+                </Link>
               </li>
               <li>
-                <a href="https://www.wikidata.org/wiki/Q6625963">
+                <Link href="https://www.wikidata.org/wiki/Q6625963">
                   Novelist (Q6625963)
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://www.wikidata.org/wiki/Q214917">
+                <Link href="https://www.wikidata.org/wiki/Q214917">
                   Playwright (Q214917)
-                </a>
+                </Link>
               </li>
             </ul>
           </li>
           <li>
             Has an English{" "}
-            <a href="https://www.wikidata.org/wiki/Help:Label">label</a> in
-            Wikidata.
+            <Link href="https://www.wikidata.org/wiki/Help:Label">label</Link>{" "}
+            in Wikidata.
           </li>
           <li>Has an English Wikipedia article.</li>
         </ul>
@@ -77,29 +82,29 @@ export default async function AboutPage() {
         <p>A work is any entity in the Wikidata database which:</p>
         <ul className="list-disc ml-6">
           <li>
-            Is an <a href="">instance of (P31)</a> on of the following:
+            Is an <Link href="">instance of (P31)</Link> on of the following:
             <ul className="list-disc ml-6 my-2">
               <li>
-                <a href="https://www.wikidata.org/wiki/Q7725634">
+                <Link href="https://www.wikidata.org/wiki/Q7725634">
                   Literary work (Q7725634)
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://www.wikidata.org/wiki/Q116476516">
+                <Link href="https://www.wikidata.org/wiki/Q116476516">
                   Dramatic work (Q116476516)
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://www.wikidata.org/wiki/Q47461344">
+                <Link href="https://www.wikidata.org/wiki/Q47461344">
                   Written work (Q47461344)
-                </a>
+                </Link>
               </li>
             </ul>
           </li>
           <li>
             Has an English{" "}
-            <a href="https://www.wikidata.org/wiki/Help:Label">label</a> in
-            Wikidata.
+            <Link href="https://www.wikidata.org/wiki/Help:Label">label</Link>{" "}
+            in Wikidata.
           </li>
         </ul>
       </Container>
@@ -116,9 +121,9 @@ export default async function AboutPage() {
           <li>Fits the definition of a Work as defined above.</li>
           <li>
             Is registered as a{" "}
-            <a href="https://www.wikidata.org/wiki/Property:P800">
+            <Link href="https://www.wikidata.org/wiki/Property:P800">
               notable work (P800)
-            </a>{" "}
+            </Link>{" "}
             of the author in Wikidata.
           </li>
         </ul>
@@ -142,12 +147,13 @@ export default async function AboutPage() {
       <h3 className="text-xl my-4">Source Code</h3>
       <Container>
         <p>
-          Book Bear is a <a href="https://nextjs.org/">next.js</a> app backed by{" "}
-          <a href="https://nodejs.org/en">Node.js</a> scripts to sync data.
+          Book Bear is a <Link href="https://nextjs.org/">next.js</Link> app
+          backed by <Link href="https://nodejs.org/en">Node.js</Link> scripts to
+          sync data.
         </p>
         <p>
           All source code is MIT licensed and available on{" "}
-          <a href="https://github.com/vegardege/bookbear">Github</a>.
+          <Link href="https://github.com/vegardege/bookbear">Github</Link>.
         </p>
       </Container>
     </section>
