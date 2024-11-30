@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default async function AboutPage() {
   return (
-    <section aria-label="About" className="w-full">
+    <section aria-label="About">
       <SubTitle>Get in Touch</SubTitle>
       <Container>
         <p>Book Bear was a weekend project I created to scratch my own itch.</p>

@@ -12,6 +12,12 @@ export interface SearchResult extends Searchable {
   score: number;
 }
 
+/**
+ * The Fuse instance used for searching.
+ *
+ * This is lazily initialized to avoid loading the database on every request,
+ * but is kept in memory for the lifetime of the process once indexed.
+ */
 let fuse: Fuse<Searchable> | undefined = undefined;
 
 /**

@@ -57,7 +57,7 @@ export default async function AuthorPage({
   const maxViews = Math.max(...author.works.map((work) => work.views || 0), 1);
 
   return (
-    <section aria-label="Author" className="w-full">
+    <section aria-label="Author">
       <Title>{author.name}</Title>
       {workGroups.length > 0 ? (
         workGroups.map(([name, works]) => {
@@ -81,11 +81,11 @@ export default async function AuthorPage({
           );
         })
       ) : (
-        <div className="my-4">
-          <Container padding={false}>
-            <p className="p-3">No works were found for this author.</p>
+        <section aria-label="Missing" className="my-4">
+          <Container>
+            <p>No works were found for this author.</p>
           </Container>
-        </div>
+        </section>
       )}
     </section>
   );

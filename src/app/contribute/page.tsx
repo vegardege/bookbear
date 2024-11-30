@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default async function AboutPage() {
   return (
-    <section aria-label="Contributions" className="w-full">
+    <section aria-label="Contributions">
       <SubTitle>Found a Data Error?</SubTitle>
       <Container>
         <p>Good news!</p>

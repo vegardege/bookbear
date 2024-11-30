@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Container from "@/components/Container";
-import Title from "@/components/Title";
+import SubTitle from "@/components/SubTitle";
 import { search, SearchResult } from "@/lib/search";
 
 /**
@@ -32,8 +32,8 @@ export default async function SearchPage({
   const params = await searchParams;
 
   return (
-    <section aria-label="Search" className="w-full flex flex-col gap-4">
-      <Title>Search Results</Title>
+    <section aria-label="Search">
+      <SubTitle>Search Results</SubTitle>
       <Container padding={false}>
         <ul className="min-w-full divide-y divide-divider divide-solid">
           {searchResults(params.q).map((result) => (

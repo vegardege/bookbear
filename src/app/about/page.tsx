@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default async function AboutPage() {
   return (
-    <section aria-label="About" className="w-full">
+    <section aria-label="About">
       <SubTitle>How Does it Work?</SubTitle>
       <Container>
         <p>
@@ -139,9 +139,9 @@ export default async function AboutPage() {
           page has received relative to other works of the same author.
         </div>
         <p>
-          Pageviews are sampled from Wikimedia's own pageviews dumps, and should
-          only be used as an indicator of relative popularity, not an absolute
-          measurement.
+          Pageviews are sampled from Wikimedia&apos;s own pageviews dumps, and
+          should only be used as an indicator of relative popularity, not an
+          absolute measurement.
         </p>
       </Container>
       <h3 className="text-xl my-4">Source Code</h3>
