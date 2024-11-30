@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Container from "@/components/Container";
 import Title from "@/components/Title";
 import { search, SearchResult } from "@/lib/search";
@@ -37,13 +38,13 @@ export default async function SearchPage({
         <ul className="min-w-full divide-y divide-divider divide-solid mt-4">
           {searchResults(params.q).map((result) => (
             <li key={result.slug}>
-              <a
+              <Link
                 key={result.slug}
                 href={`/author/${result.slug}`}
                 className={`flex flex-row items-center p-3 hover:bg-highlight hover:cursor-pointer`}
               >
                 {result.name}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

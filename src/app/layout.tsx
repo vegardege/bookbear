@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Image from "next/image";
 import Link from "next/link";
+import Button from "@/components/Button";
 import Search from "@/components/Search";
 import logo from "../../public/bookbear.png";
 import { Source_Sans_3 } from "next/font/google";
@@ -49,8 +50,15 @@ export default function RootLayout({
             </section>
             {children}
           </main>
-          <footer className="flex flex-row justify-center">
-            <p>Powered by Wikidata</p>
+          <footer className="flex flex-row justify-center mb-8">
+            <p className="font-bold text-sm">
+              <Button text="How it Works" href="/about" />
+              <Button text="Found an error?" href="/contribute" />
+              <Button
+                text="Get in Touch"
+                href="mailto:vegardegeland@gmail.com"
+              />
+            </p>
           </footer>
         </div>
       </body>
