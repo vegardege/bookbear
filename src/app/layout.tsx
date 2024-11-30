@@ -6,14 +6,7 @@ import Button from "@/components/Button";
 import Search from "@/components/Search";
 import logo from "../../public/bookbear.png";
 import { Source_Sans_3 } from "next/font/google";
-import { Lato } from "next/font/google";
 
-const lato = Lato({
-  subsets: ["latin"],
-  weight: ["400", "700"], // <-- You MUST pick which font weights you need!
-  style: ["normal", "italic"], // <-- (optional) If you need italic versions too
-  display: "swap",
-});
 const ss3 = Source_Sans_3({
   subsets: ["latin"],
   weight: ["400"],
@@ -52,10 +45,10 @@ export default function RootLayout({
           </main>
           <footer className="flex flex-row justify-center mb-8">
             <p className="font-bold text-sm">
-              <Button text="How it Works" href="/about" />
+              <Button text="How it works" href="/about" />
               <Button text="Found an error?" href="/contribute" />
               <Button
-                text="Get in Touch"
+                text="Get in touch"
                 href="mailto:vegardegeland@gmail.com"
               />
             </p>

@@ -1,6 +1,5 @@
-import { EB_Garamond, Amiri } from "next/font/google";
+import { Amiri } from "next/font/google";
 
-const eb_garamond = EB_Garamond({ subsets: ["latin"] });
 const amiri = Amiri({
   subsets: ["latin"],
   weight: ["400"],
@@ -12,9 +11,7 @@ type HeadingProps = {
 export default function Heading({ children }: HeadingProps) {
   return (
     <div className="w-full flex">
-      <h1 className={`${eb_garamond.className} text-3xl my-6 mx-2`}>
-        {children}
-      </h1>
+      <h2 className={`${amiri.className} text-3xl my-6 mx-1`}>{children}</h2>
     </div>
   );
 }

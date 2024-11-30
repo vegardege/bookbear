@@ -81,7 +81,7 @@ export default function Search() {
           <input
             name="q"
             placeholder="Search for an author"
-            className="w-full p-2 bg-transparent rounded-md"
+            className="w-full p-3 bg-transparent rounded-md"
             {...getInputProps()}
           />
           <noscript>

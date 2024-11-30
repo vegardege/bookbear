@@ -1,6 +1,5 @@
-import { EB_Garamond, Amiri } from "next/font/google";
+import { Amiri } from "next/font/google";
 
-const eb_garamond = EB_Garamond({ subsets: ["latin"] });
 const amiri = Amiri({
   subsets: ["latin"],
   weight: ["400"],

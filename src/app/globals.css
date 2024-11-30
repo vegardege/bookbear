@@ -3,16 +3,6 @@
 @tailwind utilities;
 
 :root {
-  --background: #eb9d49;
-  --foreground: #171717;
-  --card: #f5d5a7;
-  --highlight: #efba6f;
-  --bar: #844826;
-  --divider: #efba6f;
-  --focus: #844825;
-}
-
-[data-theme="mocha"] {
   --background: #f2e3d5;
   --foreground: #3c2b1a;
   --card: #fbf6ef;

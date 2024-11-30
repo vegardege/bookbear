@@ -12,7 +12,7 @@ export default function WorkRow({
 }) {
   return (
     <li>
-      <Link
+      <a
         key={work.qcode}
         href={
           work.slug
@@ -34,7 +34,7 @@ export default function WorkRow({
           <PopularityBar views={work.views ?? 0} maxViews={maxViews} />
         </div>
         <div className="w-14">{work.notable && <Star />}</div>
-      </Link>
+      </a>
     </li>
   );
 }
