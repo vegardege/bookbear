@@ -1,6 +1,8 @@
 import Container from "@/components/Container";
 import WorksTable from "@/components/WorksTable";
 import { getDatabase, Work } from "@/lib/database";
+import Title from "@/components/Title";
+import SubTitle from "@/components/SubTitle";
 
 /**
  * Group works by their form of creative work and sort them by the number
@@ -55,12 +57,12 @@ export default async function AuthorPage({
   const maxViews = Math.max(...author.works.map((work) => work.views || 0), 1);
 
   return (
-    <section aria-label="Author" className="w-full">
-      <h1>{author.name}</h1>
+    <section aria-label="Author" className="w-full flex flex-col">
+      <Title>{author.name}</Title>
       {[...workGroups.entries()].map(([name, works]) => {
         return (
           <div key={name}>
-            <h2>{capitalizeWords(name)}</h2>
+            <SubTitle>{capitalizeWords(name)}</SubTitle>
             <Container>
               <WorksTable works={works} maxViews={maxViews} />
             </Container>

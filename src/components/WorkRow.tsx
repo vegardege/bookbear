@@ -2,6 +2,8 @@
 
 import { Work } from "@/lib/database";
 import { useState } from "react";
+import PopularityBar from "./PopularityBar";
+import Star from "./Star";
 
 export default function WorkRow({
   work,
@@ -32,30 +34,12 @@ export default function WorkRow({
         </div>
       </td>
       <td className="px-1 py-3 pr-4">
-        <div className="flex flex-col gap-1 justify-center h-full">
+        <div className="flex flex-col gap-2 justify-center">
           <span className="m-0 leading-none">{work.title}</span>
-          <br />
-          <div
-            className="h-2 rounded bg-bar"
-            style={{
-              width: `${Math.max(
-                1,
-                ((work.views ?? 0) / maxViews) * 100 || 0
-              )}%`,
-            }}
-          ></div>
+          <PopularityBar views={work.views ?? 0} maxViews={maxViews} />
         </div>
       </td>
-      <td className="px-2 py-3 w-16">
-        {work.notable && (
-          <div
-            className="flex flex-row justify-center text-star"
-            title="Marked as notable"
-          >
-            ★
-          </div>
-        )}
-      </td>
+      <td className="px-2 py-3 w-14">{work.notable && <Star />}</td>
     </tr>
   );
 }

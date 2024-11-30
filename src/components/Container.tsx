@@ -3,9 +3,5 @@ type ContainerProps = {
 };
 
 export default function Container({ children }: ContainerProps) {
-  return (
-    <div className="overflow-x-auto rounded-md shadow-sm bg-card">
-      {children}
-    </div>
-  );
+  return <div className="mx-2 rounded-md shadow-sm bg-card">{children}</div>;
 }

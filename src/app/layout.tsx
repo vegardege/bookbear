@@ -4,6 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import Search from "@/components/Search";
 import logo from "../../public/bookbear.png";
+import { Source_Sans_3 } from "next/font/google";
+import { Lato } from "next/font/google";
+
+const lato = Lato({
+  subsets: ["latin"],
+  weight: ["400", "700"], // <-- You MUST pick which font weights you need!
+  style: ["normal", "italic"], // <-- (optional) If you need italic versions too
+  display: "swap",
+});
+const ss3 = Source_Sans_3({
+  subsets: ["latin"],
+  weight: ["400"],
+});
 
 export const metadata: Metadata = {
   title: "Book Bear",
@@ -17,8 +30,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col gap-8">
+      <body className={`${ss3.className} bg-background text-foreground`}>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col gap-8">
           <header className="flex flex-row justify-center mt-8">
             <Link href="/">
               <Image
@@ -30,7 +43,7 @@ export default function RootLayout({
               />
             </Link>
           </header>
-          <main className="flex flex-col gap-4 justify-center">
+          <main className="flex flex-col gap-6 justify-center">
             <section aria-label="Search" className="w-full">
               <Search />
             </section>

@@ -15,7 +15,6 @@ export default {
         highlight: "var(--highlight)",
         bar: "var(--bar)",
         divider: "var(--divider)",
-        star: "var(--star)",
       },
     },
   },

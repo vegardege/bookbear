@@ -10,18 +10,16 @@
   --bar: #844826;
   --divider: #efba6f;
   --focus: #844825;
-  --star: #000000;
 }
 
 [data-theme="mocha"] {
   --background: #f2e3d5;
-  --foreground: #4b3621;
+  --foreground: #3c2b1a;
   --card: #fbf6ef;
   --highlight: #dbc1ac;
-  --bar: #7b5e42;
+  --bar: #5a4631;
   --divider: #dbc1ac;
-  --focus: #7b5e42;
-  --star: #7b5e42;
+  --focus: #5a4631;
 }
 
 :focus {
@@ -34,16 +32,4 @@ body {
   font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   margin: 0;
-}
-
-h1 {
-  font-size: 1.6em;
-  line-height: 1.25em;
-  margin: 10px 0 30px 0;
-}
-
-h2 {
-  font-size: 1.2em;
-  line-height: 1.51em;
-  margin: 20px 0 20px 0;
 }
