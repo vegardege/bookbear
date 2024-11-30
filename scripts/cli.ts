@@ -16,12 +16,14 @@ async function authorships(): Promise<void> {
   const query = `
     SELECT ?author ?work
     WHERE {
-        ?work   wdt:P31 ?workType ;     # Literary or dramatic work
-                wdt:P50 ?author .       # which has a registered author
+        # Get literary or dramatic works with a registered author
+        ?work wdt:P31 ?workType ;
+              wdt:P50 ?author .
         
+        # Only include works of fiction
         VALUES ?workType { wd:Q7725634 wd:Q116476516 wd:Q47461344 }
 
-        # Must be an author, novelist, playwright, or poet
+        # Only include occupational authors, novelists, playwrights, poets
         ?author p:P106 ?occupationStatement .
         ?occupationStatement ps:P106 ?occupation .
 
@@ -37,11 +39,15 @@ async function notables(): Promise<void> {
   const query = `
     SELECT ?author ?work
     WHERE {
-        ?work wdt:P31 ?workType .    # Literary or dramatic work
+        # Get literary or dramatic works
+        ?work wdt:P31 ?workType ;
+              wdt:P50 ?author .
 
+        # Only include works of fiction
         VALUES ?workType { wd:Q7725634 wd:Q116476516 wd:Q47461344 }
 
-        ?author wdt:P800 ?work ;     # which is notable for an author
+        # Only include works notable for the author
+        ?author wdt:P800 ?work ;
                 p:P106 ?occupationStatement .
         ?occupationStatement ps:P106 ?occupation .
 
@@ -96,7 +102,7 @@ async function works(initialOffset: number): Promise<void> {
         (MIN(?formLabel) AS ?formOfCreativeWorkLabel)
     WHERE {
         VALUES ?work {
-            {{chunk}}  # Placeholder
+            {{chunk}}  # Placeholder for chunk of authors
         }
 
         # Get the work's label (name)
@@ -116,12 +122,14 @@ async function works(initialOffset: number): Promise<void> {
             BIND(REPLACE(?title, " ", "_") AS ?slug)
         }
 
+        # Get the form of creative work if it exists
         OPTIONAL {
             ?work wdt:P7937 ?form.
             ?form rdfs:label ?formLabel.
             FILTER(LANG(?formLabel) = "en")
         }
     }
+    # Just keep the first publication date and form of creative work
     GROUP BY ?work ?workLabel ?slug`;
   await loadChunksToCSV(filename, query, works, initialOffset, 10_000);
 }
