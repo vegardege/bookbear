@@ -44,7 +44,7 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="flex flex-row justify-center mb-8">
-            <p className="font-bold text-sm">
+            <p>
               <Button text="How it works" href="/about" />
               <Button text="Found an error?" href="/contribute" />
               <Button

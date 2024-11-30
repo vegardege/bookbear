@@ -32,10 +32,10 @@ export default async function SearchPage({
   const params = await searchParams;
 
   return (
-    <section aria-label="Search" className="w-full">
+    <section aria-label="Search" className="w-full flex flex-col gap-4">
       <Title>Search Results</Title>
-      <Container>
-        <ul className="min-w-full divide-y divide-divider divide-solid mt-4">
+      <Container padding={false}>
+        <ul className="min-w-full divide-y divide-divider divide-solid">
           {searchResults(params.q).map((result) => (
             <li key={result.slug}>
               <Link

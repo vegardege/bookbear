@@ -53,26 +53,40 @@ export default async function AuthorPage({
     return <div>Author not found</div>;
   }
 
-  const workGroups = groupAndSortWorks(author.works);
+  const workGroups = [...groupAndSortWorks(author.works).entries()];
   const maxViews = Math.max(...author.works.map((work) => work.views || 0), 1);
 
   return (
     <section aria-label="Author" className="w-full">
       <Title>{author.name}</Title>
-      {[...workGroups.entries()].map(([name, works]) => {
-        return (
-          <div key={name}>
-            <SubTitle>{capitalizeWords(name)}</SubTitle>
-            <Container>
-              <ul className="min-w-full divide-y divide-divider divide-solid">
-                {works.map((work) => (
-                  <BookBox key={work.qcode} work={work} maxViews={maxViews} />
-                ))}
-              </ul>
-            </Container>
-          </div>
-        );
-      })}
+      {workGroups.length > 0 ? (
+        workGroups.map(([name, works]) => {
+          return (
+            <div key={name}>
+              <SubTitle>{capitalizeWords(name)}</SubTitle>
+              <section aria-label={name} className="mx-1">
+                <Container padding={false}>
+                  <ul className="min-w-full divide-y divide-divider divide-solid">
+                    {works.map((work) => (
+                      <BookBox
+                        key={work.qcode}
+                        work={work}
+                        maxViews={maxViews}
+                      />
+                    ))}
+                  </ul>
+                </Container>
+              </section>
+            </div>
+          );
+        })
+      ) : (
+        <div className="my-4">
+          <Container padding={false}>
+            <p className="p-3">No works were found for this author.</p>
+          </Container>
+        </div>
+      )}
     </section>
   );
 }
