@@ -5,10 +5,27 @@
 :root {
   --background: #eb9d49;
   --foreground: #171717;
+  --card: #f5d5a7;
+  --highlight: #efba6f;
+  --bar: #844826;
+  --divider: #efba6f;
+  --focus: #844825;
+  --star: #000000;
+}
+
+[data-theme="mocha"] {
+  --background: #f2e3d5;
+  --foreground: #4b3621;
+  --card: #fbf6ef;
+  --highlight: #dbc1ac;
+  --bar: #7b5e42;
+  --divider: #dbc1ac;
+  --focus: #7b5e42;
+  --star: #7b5e42;
 }
 
 :focus {
-  outline: 2px solid #844825;
+  outline: 2px solid var(--focus);
 }
 
 body {

@@ -24,7 +24,7 @@ export default function WorkRow({
           window.open(`https://www.wikidata.org/wiki/${work.qcode}`, "_blank");
         }
       }}
-      className={`${hover ? "bg-[#efba6f] cursor-pointer" : "bg-[#f5d5a7]"}`}
+      className={`${hover ? "bg-highlight cursor-pointer" : ""}`}
     >
       <td className="px-2 py-3 w-16">
         <div className="flex flex-row justify-center">
@@ -36,13 +36,12 @@ export default function WorkRow({
           <span className="m-0 leading-none">{work.title}</span>
           <br />
           <div
-            className="h-2 rounded"
+            className="h-2 rounded bg-bar"
             style={{
               width: `${Math.max(
                 1,
                 ((work.views ?? 0) / maxViews) * 100 || 0
               )}%`,
-              backgroundColor: "#844826",
             }}
           ></div>
         </div>
@@ -50,7 +49,7 @@ export default function WorkRow({
       <td className="px-2 py-3 w-16">
         {work.notable && (
           <div
-            className="flex flex-row justify-center"
+            className="flex flex-row justify-center text-star"
             title="Marked as notable"
           >
             ★

@@ -85,17 +85,14 @@ export default function Search() {
             {...getInputProps()}
           />
           <noscript>
-            <button
-              type="submit"
-              className="py-2 px-4 bg-[#f5d5a7] rounded-r-lg"
-            >
+            <button type="submit" className="py-2 px-4 bg-card rounded-r-lg">
               Search
             </button>
           </noscript>
         </div>
       </div>
       <ul
-        className={`absolute w-full bg-white mt-1 shadow-md max-h-96 overflow-scroll p-0 z-10 ${
+        className={`absolute w-full bg-white mt-1 shadow-md rounded-md max-h-96 overflow-scroll p-0 z-10 ${
           !(isOpen && items.length) && "hidden"
         }`}
         {...getMenuProps()}
@@ -105,11 +102,12 @@ export default function Search() {
             <li
               className={`
                         py-2 px-3 shadow-sm flex flex-col
-                        ${highlightedIndex === index ? "cursor-pointer" : ""}
+                        ${
+                          highlightedIndex === index
+                            ? "cursor-pointer bg-card"
+                            : ""
+                        }
                     `}
-              style={
-                highlightedIndex === index ? { backgroundColor: "#f6d6a8" } : {}
-              }
               key={item.slug}
               {...getItemProps({ item, index })}
             >

@@ -11,6 +11,11 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        card: "var(--card)",
+        highlight: "var(--highlight)",
+        bar: "var(--bar)",
+        divider: "var(--divider)",
+        star: "var(--star)",
       },
     },
   },

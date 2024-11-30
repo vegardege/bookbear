@@ -10,7 +10,7 @@ export default function WorksTable({
 }) {
   return (
     <table className="min-w-full">
-      <tbody className="divide-y divide-[#efba6f] divide-solid">
+      <tbody className="divide-y divide-divider divide-solid">
         {works.map((work) => (
           <BookRow key={work.qcode} work={work} maxViews={maxViews} />
         ))}
