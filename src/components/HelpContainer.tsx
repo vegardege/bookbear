@@ -21,8 +21,8 @@ export default function HelpBox() {
         Search for an author to find a list of their books with popularity and
         notability, e.g.:
       </p>
-      <ul>
-        <BookBox work={exampleWork} maxViews={1000} />
+      <ul className="mx-2">
+        <BookBox work={exampleWork} maxViews={1000} showYear={false} />
       </ul>
       <div>
         <span className="inline-block mx-3">
@@ -35,7 +35,7 @@ export default function HelpBox() {
         <span className="mx-2 w-8 inline-flex flex-col justify-center">
           <Star />
         </span>
-        tells you that the book is marked as notable in Wikidata.
+        means that the book is marked as notable in Wikidata.
       </div>
     </Container>
   );
