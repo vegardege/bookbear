@@ -104,7 +104,7 @@ export default function Search() {
                         py-2 px-3 shadow-sm flex flex-col
                         ${
                           highlightedIndex === index
-                            ? "cursor-pointer bg-card"
+                            ? "cursor-pointer bg-highlight"
                             : ""
                         }
                     `}

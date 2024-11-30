@@ -1,3 +1,5 @@
+import Container from "@/components/Container";
+import Title from "@/components/Title";
 import { search, SearchResult } from "@/lib/search";
 
 /**
@@ -29,17 +31,23 @@ export default async function SearchPage({
   const params = await searchParams;
 
   return (
-    <div>
-      <h1>Search Results</h1>
-      <ul>
-        {searchResults(params.q).map((result) => (
-          <li key={result.slug}>
-            <a href={`/author/${result.slug}`}>
-              {result.name} ({result.score}) - {result.views}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <section aria-label="Search" className="w-full">
+      <Title>Search Results</Title>
+      <Container>
+        <ul className="min-w-full divide-y divide-divider divide-solid mt-4">
+          {searchResults(params.q).map((result) => (
+            <li key={result.slug}>
+              <a
+                key={result.slug}
+                href={`/author/${result.slug}`}
+                className={`flex flex-row items-center p-3 hover:bg-highlight hover:cursor-pointer`}
+              >
+                {result.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </section>
   );
 }

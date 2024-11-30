@@ -1,15 +1,16 @@
 import Container from "@/components/Container";
+import SubTitle from "@/components/SubTitle";
 
 export default async function AboutPage() {
   return (
     <section aria-label="Author" className="w-full">
-      <h1>About</h1>
+      <SubTitle>About</SubTitle>
       <Container>
-        <p>Text</p>
+        <p className="p-2">Text</p>
       </Container>
-      <h1>Contributions</h1>
+      <SubTitle>Contributions</SubTitle>
       <Container>
-        <p>Text</p>
+        <p className="p-2">Text</p>
       </Container>
     </section>
   );
