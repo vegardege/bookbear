@@ -1,6 +1,7 @@
 import { Work } from "@/lib/database";
 import PopularityBar from "./PopularityBar";
 import Star from "./Star";
+import Link from "next/link";
 
 export default function WorkRow({
   work,
@@ -13,14 +14,14 @@ export default function WorkRow({
 }) {
   return (
     <li>
-      <a
+      <Link
         key={work.qcode}
         href={
           work.slug
             ? `https://www.wikipedia.org/wiki/${work.slug}`
             : `https://www.wikidata.org/wiki/${work.qcode}`
         }
-        className={`flex flex-row items-center py-3 hover:bg-highlight hover:cursor-pointer`}
+        className={`flex flex-row items-center py-3 no-underline hover:bg-highlight hover:cursor-pointer`}
       >
         {showYear && (
           <div
@@ -37,7 +38,7 @@ export default function WorkRow({
           <PopularityBar views={work.views ?? 0} maxViews={maxViews} />
         </div>
         <div className="w-14">{work.notable && <Star />}</div>
-      </a>
+      </Link>
     </li>
   );
 }

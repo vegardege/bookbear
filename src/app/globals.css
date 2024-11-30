@@ -23,3 +23,7 @@ body {
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   margin: 0;
 }
+
+a {
+  text-decoration: underline;
+}

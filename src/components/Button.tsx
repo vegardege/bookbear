@@ -15,7 +15,7 @@ export default function Button({ text, href, theme = "dark" }: ContainerProps) {
     theme === "dark" ? "hover:text-foreground" : "hover:text-card";
 
   const space = "px-3 py-2 m-1 rounded-md shadow-md";
-  const textStyle = "text-sm";
+  const textStyle = "text-sm no-underline";
 
   return (
     <Link

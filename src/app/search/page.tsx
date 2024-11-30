@@ -41,7 +41,7 @@ export default async function SearchPage({
               <Link
                 key={result.slug}
                 href={`/author/${result.slug}`}
-                className={`flex flex-row items-center p-3 hover:bg-highlight hover:cursor-pointer`}
+                className={`flex flex-row items-center p-3 no-underline hover:bg-highlight hover:cursor-pointer`}
               >
                 {result.name}
               </Link>
