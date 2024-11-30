@@ -47,10 +47,7 @@ export default function RootLayout({
             <p>
               <Button text="How it works" href="/about" />
               <Button text="Found an error?" href="/contribute" />
-              <Button
-                text="Get in touch"
-                href="mailto:vegardegeland@gmail.com"
-              />
+              <Button text="Get in touch" href="/contact" />
             </p>
           </footer>
         </div>
