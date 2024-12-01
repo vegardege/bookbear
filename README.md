@@ -46,4 +46,22 @@ Once the file is ready, you can run the frontend:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see
+the result.
+
+You can also build it and run with:
+
+```bash
+npm run build
+npm run start
+```
+
+## Run in Docker
+
+```bash
+docker build -t bookbear:latest .
+docker run -p 3000:3000 -v ./data:/app/data bookbear:latest
+```
+
+Then open [http://localhost:3000](http://localhost:3000) with your browser to
+see the result.
