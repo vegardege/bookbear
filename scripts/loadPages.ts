@@ -2,7 +2,7 @@
  * Loads CSV data from Wikidata using the limit-offset pagination method.
  */
 import { createWriteStream } from "fs";
-import { sleep } from "./utils.js";
+import { sleep } from "./time.js";
 import { executeSparqlQuery, handleWikidataError } from "./wikidata.js";
 
 /**

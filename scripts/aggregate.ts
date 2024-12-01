@@ -2,11 +2,11 @@
  * Aggregates the extracted Wikidata from CSV files and combines it with
  * a duckdb of pageviews to create the bookbear dataset.
  */
-import fs from "fs";
+import { writeFile } from "fs/promises";
 import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
 import { Author, Work } from "@/lib/database.js";
 import { readCSV } from "./storage";
-import { formatDate } from "./utils.js";
+import { formatDate } from "./time.js";
 
 /**
  * Read author structs from the metadata CSV file.
@@ -15,7 +15,8 @@ async function getAuthors(
   authors_path: string,
   db_path: string
 ): Promise<Map<string, Author>> {
-  const authors = readCSV(authors_path).map((row) => ({
+  const authors_lines = await readCSV(authors_path);
+  const authors = authors_lines.map((row) => ({
     qcode: row[0],
     name: row[1],
     description: row[2],
@@ -48,7 +49,8 @@ async function getWorks(
   works_path: string,
   db_path: string
 ): Promise<Map<string, Work>> {
-  const works = readCSV(works_path).map((row) => ({
+  const works_lines = await readCSV(works_path);
+  const works = works_lines.map((row) => ({
     qcode: row[0],
     title: row[1],
     slug: row[2],
@@ -71,6 +73,11 @@ async function getWorks(
   }
 
   return new Map<string, Work>(works.map((a) => [a.qcode, a]));
+}
+
+async function getNotables(notables_path: string): Promise<Set<string>> {
+  const notables_lines = await readCSV(notables_path);
+  return new Set<string>(notables_lines.map((row) => row[1]));
 }
 
 /**
@@ -116,15 +123,12 @@ async function getPageviews(
 /**
  * Adds works to the correct author and marks works as notable.
  */
-async function associateAuthorsAndWorks(
-  authorships_path: string,
-  notables_path: string,
+async function hydrateAuthorsWithWorks(
+  authorships: string[][],
+  notables: Set<string>,
   authors: Map<string, Author>,
   works: Map<string, Work>
 ): Promise<void> {
-  const authorships = readCSV(authorships_path);
-  const notables = new Set(readCSV(notables_path).map((row) => row[1]));
-
   for (const [authorQcode, workQcode] of authorships) {
     const author = authors.get(authorQcode);
     const work = works.get(workQcode);
@@ -165,23 +169,20 @@ export async function aggregateToCsv(
   db_path: string
 ): Promise<void> {
   console.log("Aggregating data from:");
-  console.log(`- Authors: ${authors_path}`);
-  console.log(`- Works: ${works_path}`);
+  console.log(`- Authors:     ${authors_path}`);
+  console.log(`- Works:       ${works_path}`);
   console.log(`- Authorships: ${authorships_path}`);
-  console.log(`- Notables: ${notables_path}`);
-  console.log(`- Pageviews: ${db_path}`);
+  console.log(`- Notables:    ${notables_path}`);
+  console.log(`- Pageviews:   ${db_path}`);
 
-  const [authors, works] = await Promise.all([
+  const [authorships, notables, authors, works] = await Promise.all([
+    readCSV(authorships_path),
+    getNotables(notables_path),
     getAuthors(authors_path, db_path),
     getWorks(works_path, db_path),
   ]);
-  await associateAuthorsAndWorks(
-    authorships_path,
-    notables_path,
-    authors,
-    works
-  );
-  fs.writeFileSync(
+  await hydrateAuthorsWithWorks(authorships, notables, authors, works);
+  await writeFile(
     filename,
     JSON.stringify(Array.from(authors.values()), null, 2),
     {

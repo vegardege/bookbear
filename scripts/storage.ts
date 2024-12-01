@@ -1,15 +1,18 @@
-import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
+import { mkdir, readdir, readFile } from "fs/promises";
 import { parse } from "csv-parse/sync";
-import { getTimestamp } from "./utils.js";
+import { getCurrentTimestamp } from "./time.js";
 
 /**
  * Request a path for a new CSV file in a given group.
  */
-export function getNewPath(group: string, extension: string = "csv"): string {
-  const dir = getDataDir();
-  const fn = `${group}-${getTimestamp()}.${extension}`;
+export async function getNewPath(
+  group: string,
+  extension: string = "csv"
+): Promise<string> {
+  const dir = await getDataDir();
+  const fn = `${group}-${getCurrentTimestamp()}.${extension}`;
 
   return path.join(dir, fn);
 }
@@ -17,32 +20,34 @@ export function getNewPath(group: string, extension: string = "csv"): string {
 /**
  * Get all unique author Q codes from the most recent authorships CSV file.
  */
-export function getLatestAuthors(): string[] {
-  const csvPath = getMostRecentFilename("authorships");
-  return [...new Set(readCSV(csvPath).map((row) => row[0]))].sort();
+export async function getLatestAuthors(): Promise<string[]> {
+  const csvPath = await getMostRecentFilename("authorships");
+  const lines = await readCSV(csvPath);
+  return [...new Set(lines.map((row) => row[0]))].sort();
 }
 
 /**
  * Get all unique work Q codes from the most recent authorships CSV file.
  */
-export function getLatestWorks(): string[] {
-  const csvPath = getMostRecentFilename("authorships");
-  return [...new Set(readCSV(csvPath).map((row) => row[1]))].sort();
+export async function getLatestWorks(): Promise<string[]> {
+  const csvPath = await getMostRecentFilename("authorships");
+  const lines = await readCSV(csvPath);
+  return [...new Set(lines.map((row) => row[1]))].sort();
 }
 
 /**
  * Parse a CSV file and return the rows as an array of tuples.
  */
-export function readCSV(csvPath: string | null): string[][] {
+export async function readCSV(csvPath: string | null): Promise<string[][]> {
   if (!csvPath) {
     return [];
   }
 
-  const data = fs.readFileSync(path.join(getDataDir(), csvPath), {
+  const content = await readFile(path.join(await getDataDir(), csvPath), {
     encoding: "utf-8",
   });
 
-  return parse(data, {
+  return parse(content, {
     columns: false,
     trim: true,
     skip_empty_lines: true,
@@ -51,24 +56,27 @@ export function readCSV(csvPath: string | null): string[][] {
 }
 
 /**
- * Get the path to the latest authorships CSV file.
+ * Get the path to the latest CSV file in a given group.
  */
-export function getMostRecentFilename(group: string): string | null {
-  const files = fs
-    .readdirSync(getDataDir(), { withFileTypes: true })
+export async function getMostRecentFilename(
+  group: string
+): Promise<string | null> {
+  const dirEntries = await readdir(await getDataDir(), { withFileTypes: true });
+  const csvFiles = dirEntries
     .filter((entry) => entry.isFile())
     .filter((entry) => entry.name.startsWith(`${group}-`));
 
-  if (files.length === 0) {
+  if (csvFiles.length === 0) {
     return null;
   }
-  return files.sort().at(-1)?.name ?? null;
+  return csvFiles.sort().at(-1)?.name ?? null;
 }
 
 /**
  * Get the user's configured XDG data dir or default.
+ * Creates the directory if it does not exist.
  */
-function getDataDir(): string {
+async function getDataDir(): Promise<string> {
   const userXdgDataDir = process.env.XDG_DATA_HOME;
   const xdgDataDir =
     userXdgDataDir && userXdgDataDir.trim() !== ""
@@ -76,8 +84,7 @@ function getDataDir(): string {
       : path.join(os.homedir(), ".local", "share");
 
   const bookbearDir = path.join(xdgDataDir, "bookbear");
-  if (!fs.existsSync(bookbearDir)) {
-    fs.mkdirSync(bookbearDir, { recursive: true });
-  }
+  await mkdir(bookbearDir, { recursive: true });
+
   return bookbearDir;
 }

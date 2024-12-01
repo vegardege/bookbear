@@ -8,7 +8,7 @@ export async function sleep(seconds: number): Promise<void> {
 /**
  * Get the current timestamp in the format YYYYMMDD-HHMMSS.
  */
-export function getTimestamp(): string {
+export function getCurrentTimestamp(): string {
   const date = new Date();
 
   const pad = (n: number) => n.toString().padStart(2, "0");
@@ -25,7 +25,7 @@ export function getTimestamp(): string {
 }
 
 /**
- * Get the current timestamp in the format YYYYMMDD-HHMMSS.
+ * Get the current timestamp in the format YYYY-MM-DD HH:MM:SS.
  */
 export function formatDate(date: Date): string {
   const pad = (n: number) => n.toString().padStart(2, "0");
