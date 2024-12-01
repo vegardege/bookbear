@@ -5,135 +5,74 @@ import { aggregateToCsv } from "./aggregate.js";
 import { loadChunksToCSV } from "./loadChunks.js";
 import { loadPagesToCSV } from "./loadPages.js";
 import {
+  AUTHORS_QUERY,
+  AUTHORSHIP_QUERY,
+  NOTABLES_QUERY,
+  WORKS_QUERY,
+} from "./sparql.js";
+import {
   getNewPath,
   getMostRecentFilename,
   getLatestAuthors,
   getLatestWorks,
 } from "./storage.js";
 
+/**
+ * Queries the Wikidata SPARQL endpoint for authorship data and saves it to
+ * a CSV file.
+ */
 async function authorships(): Promise<void> {
   const filename = getNewPath("authorships");
-  const query = `
-    SELECT ?author ?work
-    WHERE {
-        # Get literary or dramatic works with a registered author
-        ?work wdt:P31 ?workType ;
-              wdt:P50 ?author .
-        
-        # Only include works of fiction
-        VALUES ?workType { wd:Q7725634 wd:Q116476516 wd:Q47461344 }
-
-        # Only include occupational authors, novelists, playwrights, poets
-        ?author p:P106 ?occupationStatement .
-        ?occupationStatement ps:P106 ?occupation .
-
-        FILTER ( 
-          ?occupation IN (wd:Q482980, wd:Q49757, wd:Q6625963, wd:Q214917)
-        )
-    }`;
-  await loadPagesToCSV(filename, query, 100_000);
+  await loadPagesToCSV(filename, AUTHORSHIP_QUERY, 100_000);
 }
 
+/**
+ * Queries the Wikidata SPARQL endpoint for notable authorship data and
+ * saves it to a CSV file.
+ */
 async function notables(): Promise<void> {
   const filename = getNewPath("notables");
-  const query = `
-    SELECT ?author ?work
-    WHERE {
-        # Get literary or dramatic works
-        ?work wdt:P31 ?workType ;
-              wdt:P50 ?author .
-
-        # Only include works of fiction
-        VALUES ?workType { wd:Q7725634 wd:Q116476516 wd:Q47461344 }
-
-        # Only include works notable for the author
-        ?author wdt:P800 ?work ;
-                p:P106 ?occupationStatement .
-        ?occupationStatement ps:P106 ?occupation .
-
-        FILTER ( 
-          ?occupation IN (wd:Q482980, wd:Q49757, wd:Q6625963, wd:Q214917)
-        )
-    }`;
-  await loadPagesToCSV(filename, query, 100_000);
+  await loadPagesToCSV(filename, NOTABLES_QUERY, 100_000);
 }
 
+/**
+ * Queries the Wikidata SPARQL endpoint for author data and saves it to
+ * a CSV file.
+ *
+ * @param initialOffset - The initial offset for pagination.
+ */
 async function authors(initialOffset: number): Promise<void> {
   const filename = getNewPath("authors");
   const authors = getLatestAuthors();
-  const query = `
-    SELECT ?author ?authorLabel ?authorDescription ?slug
-    WHERE
-    {
-        # Use VALUES to limit the number of authors in the query
-        VALUES ?author {
-            {{chunk}}  # Placeholder for chunk of authors
-        }
-
-        # Get the author's label (name)
-        ?author rdfs:label ?authorLabel .
-        FILTER(LANG(?authorLabel) = "en")
-
-        # Get the English Wikipedia page for the author
-        ?article schema:about ?author ;
-                 schema:name ?title ;
-                 schema:isPartOf <https://en.wikipedia.org/> .
-        
-        # Create a slug from the title
-        BIND(REPLACE(?title, " ", "_") AS ?slug)
-
-        # Include an optional description in English, separating authors
-        # with the same name
-        OPTIONAL {
-            ?author schema:description ?authorDescription .
-            FILTER(LANG(?authorDescription) = "en")
-        }
-    }`;
-  await loadChunksToCSV(filename, query, authors, initialOffset, 10_000);
+  await loadChunksToCSV(
+    filename,
+    AUTHORS_QUERY,
+    authors,
+    initialOffset,
+    10_000
+  );
 }
 
+/**
+ * Queries the Wikidata SPARQL endpoint for work data and saves it to
+ * a CSV file.
+ *
+ * @param initialOffset - The initial offset for pagination.
+ */
 async function works(initialOffset: number): Promise<void> {
   const filename = getNewPath("works");
   const works = getLatestWorks();
-  const query = `
-    SELECT
-        ?work ?workLabel ?slug 
-        (MIN(?publicationDate) AS ?minPublicationDate)
-        (MIN(?formLabel) AS ?formOfCreativeWorkLabel)
-    WHERE {
-        VALUES ?work {
-            {{chunk}}  # Placeholder for chunk of authors
-        }
-
-        # Get the work's label (name)
-        ?work rdfs:label ?workLabel.
-        FILTER(LANG(?workLabel) = "en")
-
-        # Get the publication date of the work if it exists
-        OPTIONAL {
-          ?work wdt:P577 ?publicationDate.
-        }
-
-        # Get the English Wikipedia page for the work if it exists
-        OPTIONAL {
-            ?article schema:about ?work ;
-                    schema:name ?title ;
-                    schema:isPartOf <https://en.wikipedia.org/>.
-            BIND(REPLACE(?title, " ", "_") AS ?slug)
-        }
-
-        # Get the form of creative work if it exists
-        OPTIONAL {
-            ?work wdt:P7937 ?form.
-            ?form rdfs:label ?formLabel.
-            FILTER(LANG(?formLabel) = "en")
-        }
-    }
-    # Just keep the first publication date and form of creative work
-    GROUP BY ?work ?workLabel ?slug`;
-  await loadChunksToCSV(filename, query, works, initialOffset, 10_000);
+  await loadChunksToCSV(filename, WORKS_QUERY, works, initialOffset, 10_000);
 }
 
+/**
+ * Aggregates the data from all previously generated CSV files and a duckdb
+ * database with pageviews into a single JSON file.
+ *
+ * This JSON file serves as the database for the application.
+ *
+ * @param db_path - Path to the DuckDB database generated by `pvduck`.
+ */
 async function aggregate(db_path: string): Promise<void> {
   const filename = getNewPath("aggregate", "json");
   const authors_path = getMostRecentFilename("authors");
