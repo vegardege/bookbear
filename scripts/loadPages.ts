@@ -9,22 +9,22 @@ import { executeSparqlQuery, handleWikidataError } from "./wikidata.js";
  * Loads a single set of pages from Wikidata.
  */
 async function loadPages(
-  query: string,
-  limit: number,
-  offset: number
+	query: string,
+	limit: number,
+	offset: number,
 ): Promise<string> {
-  let data = await executeSparqlQuery(
-    `${query}
+	const data = await executeSparqlQuery(
+		`${query}
     LIMIT ${limit}
-    OFFSET ${offset}`
-  );
+    OFFSET ${offset}`,
+	);
 
-  // Skip the header line and remove the repeated base URL,
-  // keeping only a list of comma separated Q codes.
-  return data
-    .substring(data.indexOf("\n") + 1)
-    .replaceAll("http://www.wikidata.org/entity/", "")
-    .trim();
+	// Skip the header line and remove the repeated base URL,
+	// keeping only a list of comma separated Q codes.
+	return data
+		.substring(data.indexOf("\n") + 1)
+		.replaceAll("http://www.wikidata.org/entity/", "")
+		.trim();
 }
 
 /**
@@ -34,32 +34,32 @@ async function loadPages(
  * the documentation requires. Shouldn't take too long to run anyway.
  */
 async function* loadAllPages(
-  query: string,
-  limit: number
+	query: string,
+	limit: number,
 ): AsyncGenerator<string, void, void> {
-  console.log("Loading from Wikidata");
+	console.log("Loading from Wikidata");
 
-  let offset = 0;
+	let offset = 0;
 
-  while (true) {
-    try {
-      console.log(`- Loading rows ${offset}-${offset + limit}`);
-      const data = await loadPages(query, limit, offset);
-      console.log(`- Received ${data.split("\r\n").length} rows`);
+	while (true) {
+		try {
+			console.log(`- Loading rows ${offset}-${offset + limit}`);
+			const data = await loadPages(query, limit, offset);
+			console.log(`- Received ${data.split("\r\n").length} rows`);
 
-      if (data.length === 0) {
-        break; // No more data
-      }
-      yield data;
-      offset += limit;
+			if (data.length === 0) {
+				break; // No more data
+			}
+			yield data;
+			offset += limit;
 
-      await sleep(5);
-    } catch (error) {
-      const retryAfter = await handleWikidataError(error);
-      console.log(`- Too many requests, waiting for ${retryAfter} seconds`);
-      await sleep(retryAfter);
-    }
-  }
+			await sleep(5);
+		} catch (error) {
+			const retryAfter = await handleWikidataError(error);
+			console.log(`- Too many requests, waiting for ${retryAfter} seconds`);
+			await sleep(retryAfter);
+		}
+	}
 }
 
 /**
@@ -81,16 +81,16 @@ async function* loadAllPages(
  * @throws {Error} If the query fails or the file cannot be created.
  */
 export async function loadPagesToCSV(
-  filename: string,
-  query: string,
-  limit: number
+	filename: string,
+	query: string,
+	limit: number,
 ): Promise<void> {
-  console.log("Creating output file");
-  const stream = createWriteStream(filename, { encoding: "utf-8" });
+	console.log("Creating output file");
+	const stream = createWriteStream(filename, { encoding: "utf-8" });
 
-  for await (const chunk of loadAllPages(query, limit)) {
-    stream.write(chunk + "\r\n");
-  }
-  stream.end();
-  console.log(`Created file ${filename}`);
+	for await (const chunk of loadAllPages(query, limit)) {
+		stream.write(chunk + "\r\n");
+	}
+	stream.end();
+	console.log(`Created file ${filename}`);
 }

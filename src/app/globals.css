@@ -3,27 +3,28 @@
 @tailwind utilities;
 
 :root {
-  --background: #f2e3d5;
-  --foreground: #3c2b1a;
-  --card: #fbf6ef;
-  --highlight: #dbc1ac;
-  --bar: #5a4631;
-  --divider: #dbc1ac;
-  --focus: #5a4631;
+	--background: #f2e3d5;
+	--foreground: #3c2b1a;
+	--card: #fbf6ef;
+	--highlight: #dbc1ac;
+	--bar: #5a4631;
+	--divider: #dbc1ac;
+	--focus: #5a4631;
 }
 
 :focus {
-  outline: 2px solid var(--focus);
+	outline: 2px solid var(--focus);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  margin: 0;
+	background: var(--background);
+	color: var(--foreground);
+	font-family:
+		system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	margin: 0;
 }
 
 a {
-  text-decoration: underline;
+	text-decoration: underline;
 }

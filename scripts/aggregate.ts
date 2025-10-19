@@ -2,9 +2,10 @@
  * Aggregates the extracted Wikidata from CSV files and combines it with
  * a duckdb of pageviews to create the bookbear dataset.
  */
-import { writeFile } from "fs/promises";
+
 import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
-import { Author, Work } from "@/lib/database.js";
+import { writeFile } from "fs/promises";
+import type { Author, Work } from "@/lib/database.js";
 import { readCSV } from "./storage";
 import { formatDate } from "./time.js";
 
@@ -12,72 +13,72 @@ import { formatDate } from "./time.js";
  * Read author structs from the metadata CSV file.
  */
 async function getAuthors(
-  authors_path: string,
-  db_path: string
+	authors_path: string,
+	db_path: string,
 ): Promise<Map<string, Author>> {
-  const authors_lines = await readCSV(authors_path);
-  const authors = authors_lines.map((row) => ({
-    qcode: row[0],
-    name: row[1],
-    description: row[2],
-    slug: row[3],
-    views: 0,
-    works: [],
-  }));
+	const authors_lines = await readCSV(authors_path);
+	const authors = authors_lines.map((row) => ({
+		qcode: row[0],
+		name: row[1],
+		description: row[2],
+		slug: row[3],
+		views: 0,
+		works: [],
+	}));
 
-  // Add pageviews from the provided duckdb database
-  const pageviews = await getPageviews(
-    db_path,
-    authors.map((a) => a.slug)
-  );
-  for (const author of authors) {
-    const views = pageviews.get(author.slug);
-    if (views) {
-      author.views = views;
-    }
-  }
+	// Add pageviews from the provided duckdb database
+	const pageviews = await getPageviews(
+		db_path,
+		authors.map((a) => a.slug),
+	);
+	for (const author of authors) {
+		const views = pageviews.get(author.slug);
+		if (views) {
+			author.views = views;
+		}
+	}
 
-  return new Map<string, Author>(
-    authors.sort((a, b) => b.views - a.views).map((a) => [a.qcode, a])
-  );
+	return new Map<string, Author>(
+		authors.sort((a, b) => b.views - a.views).map((a) => [a.qcode, a]),
+	);
 }
 
 /**
  * Read work structs from the metadata CSV file.
  */
 async function getWorks(
-  works_path: string,
-  db_path: string
+	works_path: string,
+	db_path: string,
 ): Promise<Map<string, Work>> {
-  const works_lines = await readCSV(works_path);
-  const works = works_lines.map((row) => ({
-    qcode: row[0],
-    title: row[1],
-    slug: row[2],
-    publicationDate: row[3] ? formatDate(new Date(row[3])) : undefined,
-    views: 0,
-    notable: false,
-    formOfCreativeWork: row[4],
-  }));
+	const works_lines = await readCSV(works_path);
+	const works = works_lines.map((row) => ({
+		qcode: row[0],
+		title: row[1],
+		slug: row[2],
+		publicationDate: row[3] ? formatDate(new Date(row[3])) : undefined,
+		views: 0,
+		notable: false,
+		formOfCreativeWork: row[4],
+	}));
 
-  // Add pageviews from the provided duckdb database
-  const pageviews = await getPageviews(
-    db_path,
-    works.map((a) => a.slug)
-  );
-  for (const work of works) {
-    const views = pageviews.get(work.slug);
-    if (work.slug && views) {
-      work.views = views;
-    }
-  }
+	// Add pageviews from the provided duckdb database
+	const pageviews = await getPageviews(
+		db_path,
+		works.map((a) => a.slug),
+	);
+	for (const work of works) {
+		const views = pageviews.get(work.slug);
+		if (work.slug && views) {
+			work.views = views;
+		}
+	}
 
-  return new Map<string, Work>(works.map((a) => [a.qcode, a]));
+	return new Map<string, Work>(works.map((a) => [a.qcode, a]));
 }
 
 async function getNotables(notables_path: string): Promise<Set<string>> {
-  const notables_lines = await readCSV(notables_path);
-  return new Set<string>(notables_lines.map((row) => row[1]));
+	const notables_lines = await readCSV(notables_path);
+	return new Set<string>(notables_lines.map((row) => row[1]));
 }
 
 /**
@@ -85,64 +86,64 @@ async function getNotables(notables_path: string): Promise<Set<string>> {
  * See documentation for more information on how to create this.
  */
 async function getPageviews(
-  db_path: string,
-  slugs: string[],
-  batchSize = 1000
+	db_path: string,
+	slugs: string[],
+	batchSize = 1000,
 ): Promise<Map<string, number>> {
-  const instance = await DuckDBInstance.create(db_path);
-  const connection = await DuckDBConnection.create(instance);
+	const instance = await DuckDBInstance.create(db_path);
+	const connection = await DuckDBConnection.create(instance);
 
-  const resultMap = new Map<string, number>();
+	const resultMap = new Map<string, number>();
 
-  // Helper to chunk slugs into batches
-  for (let i = 0; i < slugs.length; i += batchSize) {
-    const batch = slugs.slice(i, i + batchSize);
-    const ids = batch
-      .map((slug) => `'${slug.replaceAll("'", "''")}'`)
-      .join(", ");
-    const query = `
+	// Helper to chunk slugs into batches
+	for (let i = 0; i < slugs.length; i += batchSize) {
+		const batch = slugs.slice(i, i + batchSize);
+		const ids = batch
+			.map((slug) => `'${slug.replaceAll("'", "''")}'`)
+			.join(", ");
+		const query = `
         SELECT page_title, views
         FROM pageviews
         WHERE page_title IN (${ids})
       `;
-    const result = await connection.runAndReadAll(query);
+		const result = await connection.runAndReadAll(query);
 
-    for (const row of result.getRows()) {
-      resultMap.set(
-        row[0] as string,
-        (row[1] as bigint) > BigInt(Number.MAX_SAFE_INTEGER)
-          ? Number.MAX_SAFE_INTEGER
-          : Number(row[1])
-      );
-    }
-  }
+		for (const row of result.getRows()) {
+			resultMap.set(
+				row[0] as string,
+				(row[1] as bigint) > BigInt(Number.MAX_SAFE_INTEGER)
+					? Number.MAX_SAFE_INTEGER
+					: Number(row[1]),
+			);
+		}
+	}
 
-  return resultMap;
+	return resultMap;
 }
 
 /**
  * Adds works to the correct author and marks works as notable.
  */
 async function hydrateAuthorsWithWorks(
-  authorships: string[][],
-  notables: Set<string>,
-  authors: Map<string, Author>,
-  works: Map<string, Work>
+	authorships: string[][],
+	notables: Set<string>,
+	authors: Map<string, Author>,
+	works: Map<string, Work>,
 ): Promise<void> {
-  for (const [authorQcode, workQcode] of authorships) {
-    const author = authors.get(authorQcode);
-    const work = works.get(workQcode);
+	for (const [authorQcode, workQcode] of authorships) {
+		const author = authors.get(authorQcode);
+		const work = works.get(workQcode);
 
-    if (author && work) {
-      // Ignore duplicates
-      if (author.works.some((w) => w.qcode === work.qcode)) {
-        continue;
-      }
-      // Otherwise, add the work to the author
-      author.works.push(work);
-      work.notable = notables.has(work.qcode);
-    }
-  }
+		if (author && work) {
+			// Ignore duplicates
+			if (author.works.some((w) => w.qcode === work.qcode)) {
+				continue;
+			}
+			// Otherwise, add the work to the author
+			author.works.push(work);
+			work.notable = notables.has(work.qcode);
+		}
+	}
 }
 
 /**
@@ -161,33 +162,33 @@ async function hydrateAuthorsWithWorks(
  * @returns A promise that resolves when the aggregation is complete.
  */
 export async function aggregateToCsv(
-  filename: string,
-  authors_path: string,
-  works_path: string,
-  authorships_path: string,
-  notables_path: string,
-  db_path: string
+	filename: string,
+	authors_path: string,
+	works_path: string,
+	authorships_path: string,
+	notables_path: string,
+	db_path: string,
 ): Promise<void> {
-  console.log("Aggregating data from:");
-  console.log(`- Authors:     ${authors_path}`);
-  console.log(`- Works:       ${works_path}`);
-  console.log(`- Authorships: ${authorships_path}`);
-  console.log(`- Notables:    ${notables_path}`);
-  console.log(`- Pageviews:   ${db_path}`);
+	console.log("Aggregating data from:");
+	console.log(`- Authors:     ${authors_path}`);
+	console.log(`- Works:       ${works_path}`);
+	console.log(`- Authorships: ${authorships_path}`);
+	console.log(`- Notables:    ${notables_path}`);
+	console.log(`- Pageviews:   ${db_path}`);
 
-  const [authorships, notables, authors, works] = await Promise.all([
-    readCSV(authorships_path),
-    getNotables(notables_path),
-    getAuthors(authors_path, db_path),
-    getWorks(works_path, db_path),
-  ]);
-  await hydrateAuthorsWithWorks(authorships, notables, authors, works);
-  await writeFile(
-    filename,
-    JSON.stringify(Array.from(authors.values()), null, 2),
-    {
-      encoding: "utf-8",
-    }
-  );
-  console.log(`Aggregated data written to ${filename}`);
+	const [authorships, notables, authors, works] = await Promise.all([
+		readCSV(authorships_path),
+		getNotables(notables_path),
+		getAuthors(authors_path, db_path),
+		getWorks(works_path, db_path),
+	]);
+	await hydrateAuthorsWithWorks(authorships, notables, authors, works);
+	await writeFile(
+		filename,
+		JSON.stringify(Array.from(authors.values()), null, 2),
+		{
+			encoding: "utf-8",
+		},
+	);
+	console.log(`Aggregated data written to ${filename}`);
 }
