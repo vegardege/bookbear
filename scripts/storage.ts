@@ -1,7 +1,7 @@
+import { mkdir, readdir, readFile } from "node:fs/promises";
+import * as os from "node:os";
+import * as path from "node:path";
 import { parse } from "csv-parse/sync";
-import { mkdir, readdir, readFile } from "fs/promises";
-import * as os from "os";
-import * as path from "path";
 import { getCurrentTimestamp } from "./time.js";
 
 /**

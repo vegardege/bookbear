@@ -109,10 +109,10 @@ switch (args[0]) {
 		await notables();
 		break;
 	case "authors":
-		await authors(args[1] ? parseInt(args[1]) : 0);
+		await authors(args[1] ? parseInt(args[1], 10) : 0);
 		break;
 	case "works":
-		await works(args[1] ? parseInt(args[1]) : 0);
+		await works(args[1] ? parseInt(args[1], 10) : 0);
 		break;
 	case "aggregate":
 		await aggregate(args[1]);

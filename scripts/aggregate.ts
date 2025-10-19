@@ -3,8 +3,8 @@
  * a duckdb of pageviews to create the bookbear dataset.
  */
 
+import { writeFile } from "node:fs/promises";
 import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
-import { writeFile } from "fs/promises";
 import type { Author, Work } from "@/lib/database.js";
 import { readCSV } from "./storage";
 import { formatDate } from "./time.js";
