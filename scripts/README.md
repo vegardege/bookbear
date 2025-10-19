@@ -15,13 +15,13 @@ overwhelmed by complicated queries, we get data in a stepwise process:
 
 ```bash
 # First, get Q codes for author-work relationships and notable status
-npm run scripts authorships
-npm run scripts notables
+npm run script authorships
+npm run script notables
 
 # Second, hydrate the author and work objects with data
-npm run scripts authors
-npm run scripts works
+npm run script authors
+npm run script works
 
 # Third, aggregate all files into one
-npm run scripts aggregate /path/to/your/pvduck.duckdb
+npm run script aggregate /path/to/your/pvduck.duckdb
 ```
