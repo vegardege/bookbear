@@ -3,8 +3,8 @@
  * assumes we have a list of IDs we want to extract.
  */
 import { createWriteStream } from "node:fs";
-import { sleep } from "./time.js";
-import { executeSparqlQuery, handleWikidataError } from "./wikidata.js";
+import { sleep } from "./time";
+import { executeSparqlQuery, handleWikidataError } from "./wikidata";
 
 /**
  * Loads a single set of pages from Wikidata.

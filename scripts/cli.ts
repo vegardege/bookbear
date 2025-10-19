@@ -1,21 +1,21 @@
 /**
  * CLI entry point for the data pipeline scripts.
  */
-import { aggregateToCsv } from "./aggregate.js";
-import { loadChunksToCSV } from "./loadChunks.js";
-import { loadPagesToCSV } from "./loadPages.js";
+import { aggregateToCsv } from "./aggregate";
+import { loadChunksToCSV } from "./loadChunks";
+import { loadPagesToCSV } from "./loadPages";
 import {
 	AUTHORS_QUERY,
 	AUTHORSHIP_QUERY,
 	NOTABLES_QUERY,
 	WORKS_QUERY,
-} from "./sparql.js";
+} from "./sparql";
 import {
 	getLatestAuthors,
 	getLatestWorks,
 	getMostRecentFilename,
 	getNewPath,
-} from "./storage.js";
+} from "./storage";
 
 /**
  * Queries the Wikidata SPARQL endpoint for authorship data and saves it to
