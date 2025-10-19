@@ -1,5 +1,7 @@
 # Book Bear
 
+[![Code Quality](https://github.com/vegardege/bookbear/actions/workflows/code-quality.yml/badge.svg)](https://github.com/vegardege/bookbear/actions/workflows/code-quality.yml)
+
 Book Bear is a web page giving you an overview of the literary works of all
 authors known to Wikidata. The page displays whether the work is considered
 notable and how popular it is on Wikipedia.
@@ -30,15 +32,15 @@ from Wikidata and aggregate it in to a JSON file:
 
 ```bash
 # First, get Q codes for author-work relationships and notable status
-npm run scripts authorships
-npm run scripts notables
+npm run script authorships
+npm run script notables
 
 # Second, hydrate the author and work objects with data
-npm run scripts authors
-npm run scripts works
+npm run script authors
+npm run script works
 
 # Third, aggregate all files into one
-npm run scripts aggregate /path/to/your/pvduck.duckdb
+npm run script aggregate /path/to/your/pvduck.duckdb
 ```
 
 Once the file is ready, you can run the frontend:
@@ -66,3 +68,17 @@ docker run -p 3000:3000 -v ./data:/app/data bookbear:latest
 
 Then open [http://localhost:3000](http://localhost:3000) with your browser to
 see the result.
+
+## Development
+
+This project uses [biome](https://biomejs.dev/) for linting and formatting.
+The following commands are available:
+
+```bash
+npm run check
+npm run check:fix
+npm run lint
+npm run lint:fix
+npm run format
+npm run format:fix
+```
