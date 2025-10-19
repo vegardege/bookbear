@@ -1,7 +1,7 @@
 /**
  * Loads CSV data from Wikidata using the limit-offset pagination method.
  */
-import { createWriteStream } from "fs";
+import { createWriteStream } from "node:fs";
 import { sleep } from "./time.js";
 import { executeSparqlQuery, handleWikidataError } from "./wikidata.js";
 
@@ -89,7 +89,7 @@ export async function loadPagesToCSV(
 	const stream = createWriteStream(filename, { encoding: "utf-8" });
 
 	for await (const chunk of loadAllPages(query, limit)) {
-		stream.write(chunk + "\r\n");
+		stream.write(`${chunk}\r\n`);
 	}
 	stream.end();
 	console.log(`Created file ${filename}`);

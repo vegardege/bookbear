@@ -2,7 +2,7 @@
  * Loads CSV data from Wikidata using the chunk method. Unlike pagination, this
  * assumes we have a list of IDs we want to extract.
  */
-import { createWriteStream } from "fs";
+import { createWriteStream } from "node:fs";
 import { sleep } from "./time.js";
 import { executeSparqlQuery, handleWikidataError } from "./wikidata.js";
 
@@ -91,7 +91,7 @@ export async function loadChunksToCSV(
 	const chunks = loadAllChunks(query, ids, initialOffset, chunkSize);
 
 	for await (const chunk of chunks) {
-		stream.write(chunk + "\r\n");
+		stream.write(`${chunk}\r\n`);
 	}
 	stream.end();
 	console.log(`Created file ${filename}`);

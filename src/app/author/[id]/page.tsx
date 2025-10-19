@@ -16,7 +16,7 @@ function groupAndSortWorks(works: Work[]): Map<string, Work[]> {
 		if (!groups.has(key)) {
 			groups.set(key, []);
 		}
-		groups.get(key)!.push(work);
+		groups.get(key)?.push(work);
 	}
 
 	// Sort entries by number of views in group
