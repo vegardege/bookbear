@@ -5,9 +5,9 @@
 
 import { writeFile } from "node:fs/promises";
 import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
-import type { Author, Work } from "@/lib/database.js";
+import type { Author, Work } from "@/lib/database";
 import { readCSV } from "./storage";
-import { formatDate } from "./time.js";
+import { formatDate } from "./time";
 
 /**
  * Read author structs from the metadata CSV file.

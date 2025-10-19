@@ -2,7 +2,7 @@ import { mkdir, readdir, readFile } from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { parse } from "csv-parse/sync";
-import { getCurrentTimestamp } from "./time.js";
+import { getCurrentTimestamp } from "./time";
 
 /**
  * Request a path for a new CSV file in a given group.
