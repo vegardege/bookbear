@@ -10,16 +10,16 @@ import { executeSparqlQuery, handleWikidataError } from "./wikidata.js";
  * Loads a single set of pages from Wikidata.
  */
 async function loadChunk(query: string, ids: string[]): Promise<string> {
-  let data = await executeSparqlQuery(
-    query.replace("{{chunk}}", ids.map((id) => `wd:${id}`).join(" "))
-  );
+	const data = await executeSparqlQuery(
+		query.replace("{{chunk}}", ids.map((id) => `wd:${id}`).join(" ")),
+	);
 
-  // Skip the header line and remove the repeated base URL,
-  // keeping only a list of comma separated Q codes.
-  return data
-    .substring(data.indexOf("\n") + 1)
-    .replaceAll("http://www.wikidata.org/entity/", "")
-    .trim();
+	// Skip the header line and remove the repeated base URL,
+	// keeping only a list of comma separated Q codes.
+	return data
+		.substring(data.indexOf("\n") + 1)
+		.replaceAll("http://www.wikidata.org/entity/", "")
+		.trim();
 }
 
 /**
@@ -29,33 +29,33 @@ async function loadChunk(query: string, ids: string[]): Promise<string> {
  * the documentation requires. Shouldn't take too long to run anyway.
  */
 async function* loadAllChunks(
-  query: string,
-  ids: string[],
-  initialOffset: number,
-  chunkSize: number
+	query: string,
+	ids: string[],
+	initialOffset: number,
+	chunkSize: number,
 ): AsyncGenerator<string, void, void> {
-  console.log("Loading from Wikidata");
+	console.log("Loading from Wikidata");
 
-  let offset = initialOffset;
+	let offset = initialOffset;
 
-  while (offset < ids.length) {
-    try {
-      const chunk = ids.slice(offset, offset + chunkSize);
-      console.log(`- Loading rows ${offset}-${offset + chunk.length}`);
+	while (offset < ids.length) {
+		try {
+			const chunk = ids.slice(offset, offset + chunkSize);
+			console.log(`- Loading rows ${offset}-${offset + chunk.length}`);
 
-      const data = await loadChunk(query, chunk);
-      console.log(`- Received ${data.split("\r\n").length} rows`);
+			const data = await loadChunk(query, chunk);
+			console.log(`- Received ${data.split("\r\n").length} rows`);
 
-      yield data;
-      offset += chunkSize;
+			yield data;
+			offset += chunkSize;
 
-      await sleep(5);
-    } catch (error) {
-      const retryAfter = await handleWikidataError(error);
-      console.log(`- Too many requests, waiting for ${retryAfter} seconds`);
-      await sleep(retryAfter);
-    }
-  }
+			await sleep(5);
+		} catch (error) {
+			const retryAfter = await handleWikidataError(error);
+			console.log(`- Too many requests, waiting for ${retryAfter} seconds`);
+			await sleep(retryAfter);
+		}
+	}
 }
 
 /**
@@ -78,21 +78,21 @@ async function* loadAllChunks(
  * @throws {Error} If the query fails or the file cannot be created.
  */
 export async function loadChunksToCSV(
-  filename: string,
-  query: string,
-  ids: string[],
-  initialOffset: number,
-  chunkSize: number
+	filename: string,
+	query: string,
+	ids: string[],
+	initialOffset: number,
+	chunkSize: number,
 ): Promise<void> {
-  console.log("Creating output file");
-  console.log(`Extracting rows ${initialOffset}-${ids.length}`);
+	console.log("Creating output file");
+	console.log(`Extracting rows ${initialOffset}-${ids.length}`);
 
-  const stream = createWriteStream(filename, { encoding: "utf-8" });
-  const chunks = loadAllChunks(query, ids, initialOffset, chunkSize);
+	const stream = createWriteStream(filename, { encoding: "utf-8" });
+	const chunks = loadAllChunks(query, ids, initialOffset, chunkSize);
 
-  for await (const chunk of chunks) {
-    stream.write(chunk + "\r\n");
-  }
-  stream.end();
-  console.log(`Created file ${filename}`);
+	for await (const chunk of chunks) {
+		stream.write(chunk + "\r\n");
+	}
+	stream.end();
+	console.log(`Created file ${filename}`);
 }

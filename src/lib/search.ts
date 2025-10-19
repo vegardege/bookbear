@@ -1,15 +1,15 @@
-import Fuse, { FuseResult } from "fuse.js";
+import Fuse, { type FuseResult } from "fuse.js";
 import { getDatabase } from "@/lib/database";
 
 interface Searchable {
-  name: string;
-  description: string;
-  slug: string;
-  views: number;
+	name: string;
+	description: string;
+	slug: string;
+	views: number;
 }
 
 export interface SearchResult extends Searchable {
-  score: number;
+	score: number;
 }
 
 /**
@@ -18,7 +18,7 @@ export interface SearchResult extends Searchable {
  * This is lazily initialized to avoid loading the database on every request,
  * but is kept in memory for the lifetime of the process once indexed.
  */
-let fuse: Fuse<Searchable> | undefined = undefined;
+let fuse: Fuse<Searchable> | undefined;
 
 /**
  * Search for an author by name.
@@ -30,46 +30,46 @@ let fuse: Fuse<Searchable> | undefined = undefined;
  * @returns An array of search results.
  */
 export function search(
-  query: string,
-  limit: number,
-  offset: number
+	query: string,
+	limit: number,
+	offset: number,
 ): SearchResult[] {
-  if (!fuse) {
-    fuse = indexSearch();
-  }
-  return fuse
-    .search(query)
-    .sort(sortResults(query))
-    .slice(offset, offset + limit)
-    .map((result) => ({
-      name: result.item.name,
-      description: result.item.description,
-      slug: result.item.slug,
-      views: result.item.views,
-      score: result.score || 0,
-    }));
+	if (!fuse) {
+		fuse = indexSearch();
+	}
+	return fuse
+		.search(query)
+		.sort(sortResults(query))
+		.slice(offset, offset + limit)
+		.map((result) => ({
+			name: result.item.name,
+			description: result.item.description,
+			slug: result.item.slug,
+			views: result.item.views,
+			score: result.score || 0,
+		}));
 }
 
 /**
  * Create a new Fuse instance for searching.
  */
 function indexSearch(): Fuse<Searchable> {
-  const db = getDatabase();
-  const authors = Array.from(db.values());
+	const db = getDatabase();
+	const authors = Array.from(db.values());
 
-  const searchResults = authors.map((author) => ({
-    name: author.name,
-    description: author.description,
-    slug: author.slug,
-    views: author.views,
-  }));
+	const searchResults = authors.map((author) => ({
+		name: author.name,
+		description: author.description,
+		slug: author.slug,
+		views: author.views,
+	}));
 
-  return new Fuse(searchResults, {
-    keys: ["name"],
-    includeScore: true,
-    ignoreLocation: true,
-    threshold: 0.2,
-  });
+	return new Fuse(searchResults, {
+		keys: ["name"],
+		includeScore: true,
+		ignoreLocation: true,
+		threshold: 0.2,
+	});
 }
 
 /**
@@ -80,32 +80,32 @@ function indexSearch(): Fuse<Searchable> {
  * 3. Otherwise, sort by Fuse's ranking, based on edit distance.
  */
 function sortResults(
-  query: string
+	query: string,
 ): (a: FuseResult<Searchable>, b: FuseResult<Searchable>) => number {
-  query = query.toLowerCase().trim();
-  return function (a: FuseResult<Searchable>, b: FuseResult<Searchable>) {
-    // First, we sort out the possible undefined scores
-    if (a.score === undefined || b.score === undefined) {
-      return 0;
-    }
-    if (a.score === undefined) {
-      return -1;
-    }
-    if (b.score === undefined) {
-      return 1;
-    }
+	query = query.toLowerCase().trim();
+	return (a: FuseResult<Searchable>, b: FuseResult<Searchable>) => {
+		// First, we sort out the possible undefined scores
+		if (a.score === undefined || b.score === undefined) {
+			return 0;
+		}
+		if (a.score === undefined) {
+			return -1;
+		}
+		if (b.score === undefined) {
+			return 1;
+		}
 
-    // Prefer perfect prefixes
-    const aName = a.item.name.toLowerCase();
-    const bName = b.item.name.toLowerCase();
-    if (aName.startsWith(query) && !bName.startsWith(query)) {
-      return -1;
-    }
-    if (!aName.startsWith(query) && bName.startsWith(query)) {
-      return 1;
-    }
+		// Prefer perfect prefixes
+		const aName = a.item.name.toLowerCase();
+		const bName = b.item.name.toLowerCase();
+		if (aName.startsWith(query) && !bName.startsWith(query)) {
+			return -1;
+		}
+		if (!aName.startsWith(query) && bName.startsWith(query)) {
+			return 1;
+		}
 
-    // Otherwise we score by Fuse's ranking
-    return a.score - b.score;
-  };
+		// Otherwise we score by Fuse's ranking
+		return a.score - b.score;
+	};
 }
