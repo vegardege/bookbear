@@ -1,6 +1,7 @@
 /**
  * CLI entry point for the data pipeline scripts.
  */
+import { Command } from "commander";
 import { aggregateToCsv } from "./aggregate";
 import { loadChunksToCSV } from "./loadChunks";
 import { loadPagesToCSV } from "./loadPages";
@@ -18,21 +19,44 @@ import {
 } from "./storage";
 
 /**
+ * Validates that a user input number is a positive integer.
+ */
+function validatePosInt(value: string, name: string): number {
+	const num = parseInt(value, 10);
+	if (Number.isNaN(num)) {
+		throw new Error(`${name} must be a valid number`);
+	}
+	if (num < 0) {
+		throw new Error(`${name} must be non-negative`);
+	}
+	if (!Number.isInteger(num)) {
+		throw new Error(`${name} must be an integer`);
+	}
+	return num;
+}
+
+/**
  * Queries the Wikidata SPARQL endpoint for authorship data and saves it to
  * a CSV file.
+ *
+ * @param chunkSize - The number of results to fetch per page. Lower this if
+ * 	you experience 504 errors from Wikidata.
  */
-async function authorships(): Promise<void> {
+async function authorships(chunkSize: number): Promise<void> {
 	const filename = await getNewPath("authorships");
-	await loadPagesToCSV(filename, AUTHORSHIP_QUERY, 100_000);
+	await loadPagesToCSV(filename, AUTHORSHIP_QUERY, chunkSize);
 }
 
 /**
  * Queries the Wikidata SPARQL endpoint for notable authorship data and
  * saves it to a CSV file.
+ *
+ * @param chunkSize - The number of results to fetch per page. Lower this if
+ * 	you experience 504 errors from Wikidata.
  */
-async function notables(): Promise<void> {
+async function notables(chunkSize: number): Promise<void> {
 	const filename = await getNewPath("notables");
-	await loadPagesToCSV(filename, NOTABLES_QUERY, 100_000);
+	await loadPagesToCSV(filename, NOTABLES_QUERY, chunkSize);
 }
 
 /**
@@ -40,8 +64,13 @@ async function notables(): Promise<void> {
  * a CSV file.
  *
  * @param initialOffset - The initial offset for pagination.
+ * @param chunkSize - The number of results to fetch per chunk. Lower this if
+ * 	you experience 504 errors from Wikidata.
  */
-async function authors(initialOffset: number): Promise<void> {
+async function authors(
+	initialOffset: number,
+	chunkSize: number,
+): Promise<void> {
 	const filename = await getNewPath("authors");
 	const authors = await getLatestAuthors();
 	await loadChunksToCSV(
@@ -49,7 +78,7 @@ async function authors(initialOffset: number): Promise<void> {
 		AUTHORS_QUERY,
 		authors,
 		initialOffset,
-		10_000,
+		chunkSize,
 	);
 }
 
@@ -58,11 +87,13 @@ async function authors(initialOffset: number): Promise<void> {
  * a CSV file.
  *
  * @param initialOffset - The initial offset for pagination.
+ * @param chunkSize - The number of results to fetch per chunk. Lower this if
+ * 	you experience 504 errors from Wikidata.
  */
-async function works(initialOffset: number): Promise<void> {
+async function works(initialOffset: number, chunkSize: number): Promise<void> {
 	const filename = await getNewPath("works");
 	const works = await getLatestWorks();
-	await loadChunksToCSV(filename, WORKS_QUERY, works, initialOffset, 10_000);
+	await loadChunksToCSV(filename, WORKS_QUERY, works, initialOffset, chunkSize);
 }
 
 /**
@@ -99,34 +130,58 @@ async function aggregate(db_path: string): Promise<void> {
 }
 
 // Entry point for CLI
-const args = process.argv.slice(2);
+const program = new Command();
 
-switch (args[0]) {
-	case "authorships":
-		await authorships();
-		break;
-	case "notables":
-		await notables();
-		break;
-	case "authors":
-		await authors(args[1] ? parseInt(args[1], 10) : 0);
-		break;
-	case "works":
-		await works(args[1] ? parseInt(args[1], 10) : 0);
-		break;
-	case "aggregate":
-		await aggregate(args[1]);
-		break;
-	default:
-		console.error(`Unknown command: ${args[0]}`);
-		console.error("Usage: node run script <command>");
-		console.error("Commands:");
-		console.error(
-			"  authorships - Create a CSV file with all author-work pairs" +
-				"  notables - Create a CSV file with all notable author-work pairs" +
-				"  authors - Create a CSV file with detailed author data" +
-				"  works - Create a CSV file with detailed works data" +
-				"  aggregate /path/to/db.duckdb - Aggregate the data in the database",
-		);
-		break;
-}
+program
+	.name("npm run script")
+	.description("CLI for the Book Bear data pipeline scripts")
+	.version("1.0.0");
+
+program
+	.command("authorships")
+	.description("Create a CSV file with all author-work pairs")
+	.option("-c, --chunk-size <size>", "Number of results per page", "100000")
+	.action(async (options: { chunkSize: string }) => {
+		const chunkSize = validatePosInt(options.chunkSize, "Chunk size");
+		await authorships(chunkSize);
+	});
+
+program
+	.command("notables")
+	.description("Create a CSV file with all notable author-work pairs")
+	.option("-c, --chunk-size <size>", "Number of results per page", "100000")
+	.action(async (options: { chunkSize: string }) => {
+		const chunkSize = validatePosInt(options.chunkSize, "Chunk size");
+		await notables(chunkSize);
+	});
+
+program
+	.command("authors")
+	.description("Create a CSV file with detailed author data")
+	.option("-o, --offset <number>", "Initial offset for pagination", "0")
+	.option("-c, --chunk-size <size>", "Number of results per chunk", "10000")
+	.action(async (options: { offset: string; chunkSize: string }) => {
+		const offset = validatePosInt(options.offset, "Offset");
+		const chunkSize = validatePosInt(options.chunkSize, "Chunk size");
+		await authors(offset, chunkSize);
+	});
+
+program
+	.command("works")
+	.description("Create a CSV file with detailed works data")
+	.option("-o, --offset <number>", "Initial offset for pagination", "0")
+	.option("-c, --chunk-size <size>", "Number of results per chunk", "10000")
+	.action(async (options: { offset: string; chunkSize: string }) => {
+		const offset = validatePosInt(options.offset, "Offset");
+		const chunkSize = validatePosInt(options.chunkSize, "Chunk size");
+		await works(offset, chunkSize);
+	});
+
+program
+	.command("aggregate <db_path>")
+	.description("Aggregate the data in the database")
+	.action(async (db_path: string) => {
+		await aggregate(db_path);
+	});
+
+program.parse();
