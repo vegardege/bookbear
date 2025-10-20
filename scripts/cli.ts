@@ -134,7 +134,7 @@ async function aggregate(db_path: string): Promise<void> {
 const program = new Command();
 
 program
-	.name("npm run script")
+	.name("bookbear-cli")
 	.description("CLI for the Book Bear data pipeline scripts")
 	.version("1.0.0");
 

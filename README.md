@@ -37,25 +37,32 @@ project to get your own db.
 
 Once you are happy with your pageviews aggregation, you need to download meta
 data from Wikidata and aggregate it in to a JSON file, which is used by the
-backend:
+backend.
+
+This project uses [Bun](https://bun.sh) as the package manager and runtime.
 
 ```bash
 # First, get Q codes for author-work relationships and notable status
-npm run script authorships
-npm run script notables
+bun run script authorships
+bun run script notables
 
 # Second, hydrate the author and work objects with data
-npm run script authors
-npm run script works
+bun run script authors
+bun run script works
 
 # Third, aggregate all files into one
-npm run script aggregate /path/to/your/pvduck.duckdb
+bun run script aggregate /path/to/your/pvduck.duckdb
+
+# Finally, you can clean up old files to avoid wasting space.
+# This is only necessary after multiple runs, as the script will
+# keep old files by default.
+bun run script clean
 ```
 
 Once the JSON file has been created, you can run the frontend:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see
@@ -64,8 +71,8 @@ the result.
 You can also build it and run with:
 
 ```bash
-npm run build
-npm run start
+bun run build
+bun run start
 ```
 
 ## Run in Docker
@@ -83,14 +90,15 @@ see the result.
 
 ## Development
 
-This project uses [biome](https://biomejs.dev/) for linting and formatting.
-The following commands are available:
+This project uses [Bun](https://bun.sh) as the package manager and
+[biome](https://biomejs.dev/) for linting and formatting. The following
+commands are available:
 
 ```bash
-npm run check
-npm run check:fix
-npm run lint
-npm run lint:fix
-npm run format
-npm run format:fix
+bun run check
+bun run check:fix
+bun run lint
+bun run lint:fix
+bun run format
+bun run format:fix
 ```
