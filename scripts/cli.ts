@@ -12,6 +12,7 @@ import {
 	WORKS_QUERY,
 } from "./sparql";
 import {
+	cleanAllGroups,
 	getLatestAuthors,
 	getLatestWorks,
 	getMostRecentFilename,
@@ -182,6 +183,27 @@ program
 	.description("Aggregate the data in the database")
 	.action(async (db_path: string) => {
 		await aggregate(db_path);
+	});
+
+program
+	.command("clean")
+	.description("Delete all old data files, keeping only the most recent ones")
+	.action(async () => {
+		const results = await cleanAllGroups();
+
+		let totalDeleted = 0;
+		for (const [group, count] of results.entries()) {
+			if (count > 0) {
+				console.log(`- Deleted ${count} old ${group} file(s)`);
+				totalDeleted += count;
+			}
+		}
+
+		if (totalDeleted === 0) {
+			console.log("No old files to delete");
+		} else {
+			console.log(`Cleanup complete: ${totalDeleted} file(s) deleted`);
+		}
 	});
 
 program.parse();

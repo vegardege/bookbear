@@ -1,8 +1,10 @@
-import { mkdir, readdir, readFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, unlink } from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { parse } from "csv-parse/sync";
 import { getCurrentTimestamp } from "./time";
+
+const GROUPS = ["authorships", "notables", "authors", "works", "aggregate"];
 
 /**
  * Request a path for a new CSV file in a given group.
@@ -70,6 +72,57 @@ export async function getMostRecentFilename(
 		return null;
 	}
 	return csvFiles.sort().at(-1)?.name ?? null;
+}
+
+/**
+ * Get all files in a given group, sorted by name (which includes timestamp).
+ */
+async function getAllFilesInGroup(group: string): Promise<string[]> {
+	const dirEntries = await readdir(await getDataDir(), { withFileTypes: true });
+	return dirEntries
+		.filter((entry) => entry.isFile())
+		.filter((entry) => entry.name.startsWith(`${group}-`))
+		.map((entry) => entry.name)
+		.sort();
+}
+
+/**
+ * Delete all files in a group except the most recent one.
+ * Returns the number of files deleted.
+ */
+async function cleanGroup(group: string): Promise<number> {
+	const files = await getAllFilesInGroup(group);
+
+	if (files.length <= 1) {
+		return 0;
+	}
+
+	// Keep the most recent file (last in sorted array), delete the rest
+	const filesToDelete = files.slice(0, -1);
+	const dataDir = await getDataDir();
+
+	await Promise.all(
+		filesToDelete.map((file) => unlink(path.join(dataDir, file))),
+	);
+
+	return filesToDelete.length;
+}
+
+/**
+ * Clean all data groups by deleting old files, keeping only the most recent
+ * file in each group.
+ *
+ * @returns A map of group names to the number of files deleted in each group.
+ */
+export async function cleanAllGroups(): Promise<Map<string, number>> {
+	const results = new Map<string, number>();
+
+	for (const group of GROUPS) {
+		const deletedCount = await cleanGroup(group);
+		results.set(group, deletedCount);
+	}
+
+	return results;
 }
 
 /**
