@@ -1,30 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+	--color-background: #f2e3d5;
+	--color-foreground: #3c2b1a;
+	--color-card: #fbf6ef;
+	--color-highlight: #dbc1ac;
+	--color-bar: #5a4631;
+	--color-divider: #dbc1ac;
+	--color-focus: #5a4631;
+}
 
 :root {
-	--background: #f2e3d5;
-	--foreground: #3c2b1a;
-	--card: #fbf6ef;
-	--highlight: #dbc1ac;
-	--bar: #5a4631;
-	--divider: #dbc1ac;
-	--focus: #5a4631;
+	--background: var(--color-background);
+	--foreground: var(--color-foreground);
+	--card: var(--color-card);
+	--highlight: var(--color-highlight);
+	--bar: var(--color-bar);
+	--divider: var(--color-divider);
+	--focus: var(--color-focus);
 }
 
 :focus {
 	outline: 2px solid var(--focus);
 }
 
-body {
-	background: var(--background);
-	color: var(--foreground);
-	font-family:
-		system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
-		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-	margin: 0;
-}
+@layer base {
+	body {
+		background: var(--background);
+		color: var(--foreground);
+		font-family:
+			system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
+			"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		margin: 0;
+	}
 
-a {
-	text-decoration: underline;
+	a {
+		text-decoration: underline;
+	}
 }
