@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const WIKIDATA_API_URL = "https://query.wikidata.org/sparql";
 const WIKIDATA_API_HEADERS = {
 	"Content-Type": "application/sparql-query",
@@ -30,17 +28,19 @@ class TooManyRequestsError extends Error {
  * row with the column names.
  */
 export async function executeSparqlQuery(query: string): Promise<string> {
-	const res = await axios.post(WIKIDATA_API_URL, query, {
+	const res = await fetch(WIKIDATA_API_URL, {
+		method: "POST",
 		headers: WIKIDATA_API_HEADERS,
+		body: query,
 	});
 	if (res.status === 429) {
-		const retryAfter = parseInt(res.headers["retry-after"], 10);
+		const retryAfter = parseInt(res.headers.get("retry-after") ?? "0", 10);
 		throw new TooManyRequestsError(retryAfter);
 	}
-	if (res.status !== 200) {
+	if (!res.ok) {
 		throw new Error(`Error executing SPARQL query: ${res.statusText}`);
 	}
-	return res.data;
+	return res.text();
 }
 
 /**
