@@ -1,5 +1,5 @@
 # Base stage
-FROM node:23-alpine AS base
+FROM node:25-alpine AS base
 WORKDIR /app
 
 # Install dependencies into temp directories

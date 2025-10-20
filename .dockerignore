@@ -33,5 +33,4 @@ bun-debug.log*
 coverage
 
 # Data (generated files)
-data/*.csv
-data/*.json
+data
