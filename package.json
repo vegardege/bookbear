@@ -18,16 +18,16 @@
 	"dependencies": {
 		"downshift": "9.0.10",
 		"fuse.js": "7.1.0",
-		"next": "15.0.3",
-		"react": "18.3.1",
-		"react-dom": "18.3.1"
+		"next": "15.5.6",
+		"react": "19.2.0",
+		"react-dom": "19.2.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.6",
 		"@duckdb/node-api": "1.4.1-r.4",
 		"@types/node": "^20",
-		"@types/react": "^18",
-		"@types/react-dom": "^18",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
 		"commander": "^14.0.1",
 		"csv-parse": "5.6.0",
 		"postcss": "^8",
