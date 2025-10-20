@@ -1,6 +1,6 @@
 # Book Bear
 
-[![Code Quality](https://github.com/vegardege/bookbear/actions/workflows/code-quality.yml/badge.svg)](https://github.com/vegardege/bookbear/actions/workflows/code-quality.yml)
+[![Lint, Build, Deploy](https://github.com/vegardege/bookbear/actions/workflows/lint-build-deploy.yml/badge.svg)](https://github.com/vegardege/bookbear/actions/workflows/lint-build-deploy.yml)
 
 Book Bear is a web page giving you an overview of the literary works of all
 authors known to Wikidata. The page displays whether the work is considered

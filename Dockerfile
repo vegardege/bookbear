@@ -19,7 +19,8 @@ COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
 ENV NODE_ENV=production
-RUN bun run build
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN bun run build --no-lint
 
 # Copy production dependencies and source code into final image
 FROM base AS release
