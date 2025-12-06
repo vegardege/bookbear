@@ -130,6 +130,9 @@ export default function Search() {
 						name="q"
 						placeholder="Search for an author"
 						className="w-full p-3 bg-transparent rounded-md"
+						aria-label="Search for an author"
+						aria-autocomplete="list"
+						aria-controls="search-results"
 						{...getInputProps()}
 					/>
 					<noscript>
@@ -140,6 +143,8 @@ export default function Search() {
 				</div>
 			</div>
 			<ul
+				id="search-results"
+				aria-live="polite"
 				className={`absolute w-full bg-white mt-1 shadow-md rounded-md max-h-96 overflow-scroll p-0 z-10 ${
 					!(isOpen && items.length) && "hidden"
 				}`}
