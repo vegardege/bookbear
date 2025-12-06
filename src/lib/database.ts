@@ -40,11 +40,11 @@ export function getDatabase(): Map<string, Author> {
  * an actual backend db. We just load it in memory and keep it there.
  */
 function loadDatabase() {
-	const data_path = path.join(process.cwd(), "data", "database.json");
-	if (!fs.existsSync(data_path)) {
+	const dataPath = path.join(process.cwd(), "data", "database.json");
+	if (!fs.existsSync(dataPath)) {
 		throw new Error("Database file not found");
 	}
-	const data = fs.readFileSync(data_path, { encoding: "utf-8" });
+	const data = fs.readFileSync(dataPath, { encoding: "utf-8" });
 	const authors = JSON.parse(data) as Author[];
 	for (const author of authors) {
 		database.set(author.slug, author);
