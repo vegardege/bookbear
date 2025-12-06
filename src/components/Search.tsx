@@ -6,6 +6,20 @@ import React from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { SearchResult } from "@/lib/search";
 
+type ActionItem = {
+	type: "action";
+	id: string;
+	label: string;
+	path: string;
+};
+
+type ResultItem = {
+	type: "result";
+	data: SearchResult;
+};
+
+type MenuItem = ResultItem | ActionItem;
+
 /**
  * Search component using `downshift` for autocompletion.
  *
@@ -14,7 +28,7 @@ import type { SearchResult } from "@/lib/search";
  * a submit button to redirect the user to the search page.
  */
 export default function Search() {
-	const [items, setItems] = React.useState<SearchResult[]>([]);
+	const [items, setItems] = React.useState<MenuItem[]>([]);
 	const router = useRouter();
 
 	const fetchSearchResults = React.useCallback((query: string) => {
@@ -22,18 +36,46 @@ export default function Search() {
 		qs.set("q", query);
 		qs.set("limit", "5");
 		fetch(`/api/search?${qs.toString()}`)
-			.then((res) => res.json())
+			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Search failed");
+				}
+				return res.json();
+			})
 			.then((data: SearchResult[]) => {
+				const menuItems: MenuItem[] = data.map((result) => ({
+					type: "result",
+					data: result,
+				}));
+
 				if (data.length >= 5) {
-					data.push({
-						name: "See all results",
-						description: "",
-						slug: "",
-						views: 0,
-						score: 0,
+					menuItems.push({
+						type: "action",
+						id: "see-all",
+						label: "See all results",
+						path: `/search?q=${encodeURIComponent(query)}`,
+					});
+				} else {
+					menuItems.push({
+						type: "action",
+						id: "contribute",
+						label: "Missing someone?",
+						path: "/contribute",
 					});
 				}
-				setItems(data);
+
+				setItems(menuItems);
+			})
+			.catch(() => {
+				// Show error action on failure
+				setItems([
+					{
+						type: "action",
+						id: "error",
+						label: "Search failed. Please try again.",
+						path: "",
+					},
+				]);
 			});
 	}, []);
 
@@ -45,12 +87,12 @@ export default function Search() {
 		getInputProps,
 		highlightedIndex,
 		getItemProps,
-		inputValue,
 		selectItem,
 	} = useCombobox({
 		items,
 		itemToString(item) {
-			return item?.name ?? "";
+			if (!item) return "";
+			return item.type === "result" ? item.data.name : item.label;
 		},
 		onInputValueChange({ inputValue }) {
 			if (!inputValue) {
@@ -65,16 +107,16 @@ export default function Search() {
 				return;
 			}
 
-			// Hard coded exception, expand search
-			if (selectedItem.name === "See all results") {
-				router.push(`/search?q=${encodeURIComponent(inputValue)}`);
-				selectItem(null);
-				setItems([]);
-				return;
+			if (selectedItem.type === "action") {
+				// Handle action items
+				if (selectedItem.path) {
+					router.push(selectedItem.path);
+				}
+			} else {
+				// Navigate to author page
+				router.push(`/author/${encodeURIComponent(selectedItem.data.slug)}`);
 			}
 
-			// Navigate to author page
-			router.push(`/author/${encodeURIComponent(selectedItem.slug)}`);
 			selectItem(null);
 			setItems([]);
 		},
@@ -104,23 +146,39 @@ export default function Search() {
 				{...getMenuProps()}
 			>
 				{isOpen &&
-					items.map((item, index) => (
-						<li
-							className={`
-                        py-2 px-3 shadow-sm flex flex-col
-                        ${
-													highlightedIndex === index
-														? "cursor-pointer bg-highlight"
-														: ""
-												}
-                    `}
-							key={item.slug}
-							{...getItemProps({ item, index })}
-						>
-							<span>{item.name}</span>
-							<span className="text-sm text-gray-700">{item.description}</span>
-						</li>
-					))}
+					items.map((item, index) => {
+						const isAction = item.type === "action";
+						const isError = isAction && item.id === "error";
+
+						return (
+							<li
+								className={`
+									py-2 px-3 shadow-sm flex flex-col
+									${isError || isAction ? "border-t border-gray-300 items-center" : ""}
+									${
+										highlightedIndex === index
+											? "cursor-pointer bg-highlight"
+											: ""
+									}
+								`}
+								key={isAction ? item.id : item.data.slug}
+								{...getItemProps({ item, index })}
+							>
+								{isAction ? (
+									<span className="text-black text-sm italic">
+										{item.label}
+									</span>
+								) : (
+									<>
+										<span className="text-black">{item.data.name}</span>
+										<span className="text-sm text-gray-700">
+											{item.data.description}
+										</span>
+									</>
+								)}
+							</li>
+						);
+					})}
 			</ul>
 		</form>
 	);
