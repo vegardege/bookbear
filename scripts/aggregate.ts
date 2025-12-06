@@ -4,7 +4,7 @@
  */
 
 import { writeFile } from "node:fs/promises";
-import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
+import { DuckDBConnection, DuckDBInstance, listValue } from "@duckdb/node-api";
 import type { Author, Work } from "@/lib/database";
 import { readCSV } from "./storage";
 import { formatDate } from "./time";
@@ -95,18 +95,18 @@ async function getPageviews(
 
 	const resultMap = new Map<string, number>();
 
-	// Helper to chunk slugs into batches
+	// Process slugs in batches using parameterized queries
 	for (let i = 0; i < slugs.length; i += batchSize) {
 		const batch = slugs.slice(i, i + batchSize);
-		const ids = batch
-			.map((slug) => `'${slug.replaceAll("'", "''")}'`)
-			.join(", ");
 		const query = `
-        SELECT page_title, views
-        FROM pageviews
-        WHERE page_title IN (${ids})
-      `;
-		const result = await connection.runAndReadAll(query);
+			SELECT page_title, views
+			FROM pageviews
+			WHERE page_title = ANY($slugs)
+		`;
+
+		const result = await connection.runAndReadAll(query, {
+			slugs: listValue(batch),
+		});
 
 		for (const row of result.getRows()) {
 			resultMap.set(
