@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import BookBox from "@/components/BookBox";
 import Container from "@/components/Container";
 import SubTitle from "@/components/SubTitle";
@@ -50,7 +51,7 @@ export default async function AuthorPage({
 	const database = getDatabase();
 	const author = database.get(decodeURIComponent(id));
 	if (!author) {
-		return <div>Author not found</div>;
+		notFound();
 	}
 
 	const workGroups = [...groupAndSortWorks(author.works).entries()];
