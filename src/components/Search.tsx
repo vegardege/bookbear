@@ -3,6 +3,7 @@
 import { useCombobox } from "downshift";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import type { SearchResult } from "@/lib/search";
 
 /**
@@ -15,6 +16,28 @@ import type { SearchResult } from "@/lib/search";
 export default function Search() {
 	const [items, setItems] = React.useState<SearchResult[]>([]);
 	const router = useRouter();
+
+	const fetchSearchResults = React.useCallback((query: string) => {
+		const qs = new URLSearchParams();
+		qs.set("q", query);
+		qs.set("limit", "5");
+		fetch(`/api/search?${qs.toString()}`)
+			.then((res) => res.json())
+			.then((data: SearchResult[]) => {
+				if (data.length >= 5) {
+					data.push({
+						name: "See all results",
+						description: "",
+						slug: "",
+						views: 0,
+						score: 0,
+					});
+				}
+				setItems(data);
+			});
+	}, []);
+
+	const debouncedSearch = useDebounce(fetchSearchResults, 100);
 
 	const {
 		isOpen,
@@ -35,24 +58,7 @@ export default function Search() {
 				return;
 			}
 
-			// Fetch search results when input changes
-			const qs = new URLSearchParams();
-			qs.set("q", inputValue);
-			qs.set("limit", "5");
-			fetch(`/api/search?${qs.toString()}`)
-				.then((res) => res.json())
-				.then((data: SearchResult[]) => {
-					if (data.length >= 5) {
-						data.push({
-							name: "See all results",
-							description: "",
-							slug: "",
-							views: 0,
-							score: 0,
-						});
-					}
-					setItems(data);
-				});
+			debouncedSearch(inputValue);
 		},
 		onSelectedItemChange({ selectedItem }) {
 			if (!selectedItem) {
