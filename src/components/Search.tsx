@@ -37,7 +37,7 @@ export default function Search() {
 
 			// Fetch search results when input changes
 			const qs = new URLSearchParams();
-			qs.set("q", encodeURIComponent(inputValue));
+			qs.set("q", inputValue);
 			qs.set("limit", "5");
 			fetch(`/api/search?${qs.toString()}`)
 				.then((res) => res.json())
@@ -61,14 +61,14 @@ export default function Search() {
 
 			// Hard coded exception, expand search
 			if (selectedItem.name === "See all results") {
-				router.push(`/search?q=${inputValue}`);
+				router.push(`/search?q=${encodeURIComponent(inputValue)}`);
 				selectItem(null);
 				setItems([]);
 				return;
 			}
 
 			// Navigate to author page
-			router.push(`/author/${selectedItem.slug}`);
+			router.push(`/author/${encodeURIComponent(selectedItem.slug)}`);
 			selectItem(null);
 			setItems([]);
 		},

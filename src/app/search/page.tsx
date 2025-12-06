@@ -13,7 +13,7 @@ function searchResults(query: string | string[] | undefined): SearchResult[] {
 	if (Array.isArray(query)) {
 		query = query[0];
 	}
-	return search(decodeURIComponent(query), 10, 0);
+	return search(query, 10, 0);
 }
 
 /**
@@ -40,7 +40,7 @@ export default async function SearchPage({
 						<li key={result.slug}>
 							<Link
 								key={result.slug}
-								href={`/author/${result.slug}`}
+								href={`/author/${encodeURIComponent(result.slug)}`}
 								className={`flex flex-row items-center p-3 no-underline hover:bg-highlight hover:cursor-pointer`}
 							>
 								{result.name}
