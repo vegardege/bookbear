@@ -85,7 +85,7 @@ function sortResults(
 	query = query.toLowerCase().trim();
 	return (a: FuseResult<Searchable>, b: FuseResult<Searchable>) => {
 		// First, we sort out the possible undefined scores
-		if (a.score === undefined || b.score === undefined) {
+		if (a.score === undefined && b.score === undefined) {
 			return 0;
 		}
 		if (a.score === undefined) {
