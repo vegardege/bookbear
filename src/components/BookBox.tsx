@@ -15,7 +15,6 @@ export default function WorkRow({
 	return (
 		<li>
 			<Link
-				key={work.qcode}
 				href={
 					work.slug
 						? `https://www.wikipedia.org/wiki/${work.slug}`
