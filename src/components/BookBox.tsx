@@ -27,7 +27,7 @@ export default function WorkRow({
 						className="flex flex-row w-16 justify-center text-sm"
 						title={work.publicationDate}
 					>
-						<time dateTime={work.publicationDate || ""}>
+						<time dateTime={work.publicationDate?.substring(0, 4) || ""}>
 							{work.publicationDate?.substring(0, 4) || "–"}
 						</time>
 					</div>
