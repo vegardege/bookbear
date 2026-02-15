@@ -2,9 +2,9 @@ import Link from "next/link";
 import Container from "@/components/Container";
 import SubTitle from "@/components/SubTitle";
 
-export default async function AboutPage() {
+export default async function ContactPage() {
 	return (
-		<section aria-label="About">
+		<section aria-label="Contact">
 			<SubTitle>Get in Touch</SubTitle>
 			<Container>
 				<p>Book Bear was a weekend project I created to scratch my own itch.</p>
