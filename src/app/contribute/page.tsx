@@ -10,9 +10,15 @@ export default async function AboutPage() {
 				<p>Good news!</p>
 				<p>
 					Book Bear is based on the wonderful{" "}
-					<Link href="https://wikidata.org/">Wikidata</Link> database, which
-					means you can help improve the data not just for this site, but for
-					everyone.
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://wikidata.org/"
+					>
+						Wikidata
+					</Link>{" "}
+					database, which means you can help improve the data not just for this
+					site, but for everyone.
 				</p>
 				<p>
 					Read more about the <Link href="/about">rules to be included</Link> in
@@ -21,7 +27,11 @@ export default async function AboutPage() {
 				</p>
 				<p>
 					Make sure to follow the{" "}
-					<Link href="https://www.wikidata.org/wiki/Wikidata:List_of_policies_and_guidelines">
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://www.wikidata.org/wiki/Wikidata:List_of_policies_and_guidelines"
+					>
 						Wikidata guidelines
 					</Link>
 					.
@@ -33,7 +43,11 @@ export default async function AboutPage() {
 				<p>
 					Book Bear is completely open source and MIT licensed. Get in touch or
 					contribute to our{" "}
-					<Link href="https://github.com/vegardege/bookbear">
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://github.com/vegardege/bookbear"
+					>
 						GitHub repository
 					</Link>{" "}
 					to improve the page.

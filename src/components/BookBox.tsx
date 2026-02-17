@@ -21,6 +21,8 @@ export default function WorkRow({
 						? `https://www.wikipedia.org/wiki/${work.slug}`
 						: `https://www.wikidata.org/wiki/${work.qcode}`
 				}
+				target="_blank"
+				rel="noopener noreferrer"
 				className={`flex flex-row items-center py-3 no-underline hover:bg-highlight hover:cursor-pointer`}
 			>
 				{showYear && (
