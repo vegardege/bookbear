@@ -105,6 +105,11 @@ function sortResults(
 			return 1;
 		}
 
+		// If scores are very similar, prefer more popular authors
+		if (Math.abs(a.score - b.score) < 0.05) {
+			return b.item.views - a.item.views;
+		}
+
 		// Otherwise we score by Fuse's ranking
 		return a.score - b.score;
 	};
