@@ -45,7 +45,12 @@ function loadDatabase() {
 		throw new Error("Database file not found");
 	}
 	const data = fs.readFileSync(dataPath, { encoding: "utf-8" });
-	const authors = JSON.parse(data) as Author[];
+	let authors: Author[];
+	try {
+		authors = JSON.parse(data) as Author[];
+	} catch {
+		throw new Error("Database file is corrupted or contains invalid JSON");
+	}
 	for (const author of authors) {
 		database.set(author.slug, author);
 	}
