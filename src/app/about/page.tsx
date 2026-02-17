@@ -11,9 +11,19 @@ export default async function AboutPage() {
 			<Container>
 				<p>
 					Book Bear is a wrapper around{" "}
-					<Link href="https://wikidata.org/">Wikidata</Link>. Popularity is
-					based on{" "}
-					<Link href="https://wikitech.wikimedia.org/wiki/Data_Platform/Data_Lake/Traffic/Pageviews">
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://wikidata.org/"
+					>
+						Wikidata
+					</Link>
+					. Popularity is based on{" "}
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://wikitech.wikimedia.org/wiki/Data_Platform/Data_Lake/Traffic/Pageviews"
+					>
 						pageviews data
 					</Link>{" "}
 					from the Wikimedia project.
@@ -22,7 +32,11 @@ export default async function AboutPage() {
 					Listed below are the rules used to extract data. Get in touch if you
 					think the rules can be improved, but note that I explicitly exclude
 					e.g. the generic{" "}
-					<Link href="https://www.wikidata.org/wiki/Q36180">
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://www.wikidata.org/wiki/Q36180"
+					>
 						writer (Q36180)
 					</Link>{" "}
 					because I want Book Bear to focus on fiction, poetry, and drama, not
@@ -35,35 +49,59 @@ export default async function AboutPage() {
 				<ul className="list-disc ml-6">
 					<li>
 						Is registered as the{" "}
-						<Link href="https://www.wikidata.org/wiki/Property:P50">
+						<Link
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://www.wikidata.org/wiki/Property:P50"
+						>
 							author (P50)
 						</Link>{" "}
 						of at least one work in Wikidata.
 					</li>
 					<li>
 						Has an{" "}
-						<Link href="https://www.wikidata.org/wiki/Property:P106">
+						<Link
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://www.wikidata.org/wiki/Property:P106"
+						>
 							occupation (P106)
 						</Link>{" "}
 						of on of the following:
 						<ul className="list-disc ml-6 my-2">
 							<li>
-								<Link href="https://www.wikidata.org/wiki/Q482980">
+								<Link
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://www.wikidata.org/wiki/Q482980"
+								>
 									Author (Q482980)
 								</Link>
 							</li>
 							<li>
-								<Link href="https://www.wikidata.org/wiki/Q49757">
+								<Link
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://www.wikidata.org/wiki/Q49757"
+								>
 									Poet (Q49757)
 								</Link>
 							</li>
 							<li>
-								<Link href="https://www.wikidata.org/wiki/Q6625963">
+								<Link
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://www.wikidata.org/wiki/Q6625963"
+								>
 									Novelist (Q6625963)
 								</Link>
 							</li>
 							<li>
-								<Link href="https://www.wikidata.org/wiki/Q214917">
+								<Link
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://www.wikidata.org/wiki/Q214917"
+								>
 									Playwright (Q214917)
 								</Link>
 							</li>
@@ -71,7 +109,13 @@ export default async function AboutPage() {
 					</li>
 					<li>
 						Has an English{" "}
-						<Link href="https://www.wikidata.org/wiki/Help:Label">label</Link>{" "}
+						<Link
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://www.wikidata.org/wiki/Help:Label"
+						>
+							label
+						</Link>{" "}
 						in Wikidata.
 					</li>
 					<li>Has an English Wikipedia article.</li>
@@ -85,17 +129,29 @@ export default async function AboutPage() {
 						Is an <Link href="">instance of (P31)</Link> on of the following:
 						<ul className="list-disc ml-6 my-2">
 							<li>
-								<Link href="https://www.wikidata.org/wiki/Q7725634">
+								<Link
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://www.wikidata.org/wiki/Q7725634"
+								>
 									Literary work (Q7725634)
 								</Link>
 							</li>
 							<li>
-								<Link href="https://www.wikidata.org/wiki/Q116476516">
+								<Link
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://www.wikidata.org/wiki/Q116476516"
+								>
 									Dramatic work (Q116476516)
 								</Link>
 							</li>
 							<li>
-								<Link href="https://www.wikidata.org/wiki/Q47461344">
+								<Link
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://www.wikidata.org/wiki/Q47461344"
+								>
 									Written work (Q47461344)
 								</Link>
 							</li>
@@ -103,7 +159,13 @@ export default async function AboutPage() {
 					</li>
 					<li>
 						Has an English{" "}
-						<Link href="https://www.wikidata.org/wiki/Help:Label">label</Link>{" "}
+						<Link
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://www.wikidata.org/wiki/Help:Label"
+						>
+							label
+						</Link>{" "}
 						in Wikidata.
 					</li>
 				</ul>
@@ -121,7 +183,11 @@ export default async function AboutPage() {
 					<li>Fits the definition of a Work as defined above.</li>
 					<li>
 						Is registered as a{" "}
-						<Link href="https://www.wikidata.org/wiki/Property:P800">
+						<Link
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://www.wikidata.org/wiki/Property:P800"
+						>
 							notable work (P800)
 						</Link>{" "}
 						of the author in Wikidata.
@@ -147,13 +213,34 @@ export default async function AboutPage() {
 			<h3 className="text-xl my-4">Source Code</h3>
 			<Container>
 				<p>
-					Book Bear is a <Link href="https://nextjs.org/">next.js</Link> app
-					backed by <Link href="https://nodejs.org/en">Node.js</Link> scripts to
-					sync data.
+					Book Bear is a{" "}
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://nextjs.org/"
+					>
+						next.js
+					</Link>{" "}
+					app backed by{" "}
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://nodejs.org/en"
+					>
+						Node.js
+					</Link>{" "}
+					scripts to sync data.
 				</p>
 				<p>
 					All source code is MIT licensed and available on{" "}
-					<Link href="https://github.com/vegardege/bookbear">Github</Link>.
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://github.com/vegardege/bookbear"
+					>
+						Github
+					</Link>
+					.
 				</p>
 			</Container>
 		</section>

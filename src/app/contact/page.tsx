@@ -20,7 +20,14 @@ export default async function ContactPage() {
 				</p>
 				<p>
 					If you are curious about my other projects, they are all available on{" "}
-					<Link href="https://pebblepatch.dev/">pebblepatch.dev</Link>.
+					<Link
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://pebblepatch.dev/"
+					>
+						pebblepatch.dev
+					</Link>
+					.
 				</p>
 			</Container>
 		</section>
