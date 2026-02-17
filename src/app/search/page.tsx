@@ -30,25 +30,34 @@ export default async function SearchPage({
 	searchParams: Promise<{ q: string | string[] | undefined }>;
 }) {
 	const params = await searchParams;
+	const results = searchResults(params.q);
 
 	return (
 		<section aria-label="Search">
 			<SubTitle>Search Results</SubTitle>
-			<Container padding={false}>
-				<ul className="min-w-full divide-y divide-divider divide-solid">
-					{searchResults(params.q).map((result) => (
-						<li key={result.slug}>
-							<Link
-								key={result.slug}
-								href={`/author/${encodeURIComponent(result.slug)}`}
-								className={`flex flex-row items-center p-3 no-underline hover:bg-highlight hover:cursor-pointer`}
-							>
-								{result.name}
-							</Link>
-						</li>
-					))}
-				</ul>
-			</Container>
+			{results.length === 0 ? (
+				<Container>
+					<p>No authors matched your search query. </p>
+					<p>
+						<Link href="/contribute">Missing someone?</Link>
+					</p>
+				</Container>
+			) : (
+				<Container padding={false}>
+					<ul className="min-w-full divide-y divide-divider divide-solid">
+						{results.map((result) => (
+							<li key={result.slug}>
+								<Link
+									href={`/author/${encodeURIComponent(result.slug)}`}
+									className={`flex flex-row items-center p-3 no-underline hover:bg-highlight hover:cursor-pointer`}
+								>
+									{result.name}
+								</Link>
+							</li>
+						))}
+					</ul>
+				</Container>
+			)}
 		</section>
 	);
 }
