@@ -5,7 +5,7 @@ export default function Star() {
 		<div className="flex flex-row justify-center">
 			<Image
 				src="/star.svg"
-				alt="Star"
+				alt="Notable work"
 				width={12}
 				height={12}
 				title="Notable work"

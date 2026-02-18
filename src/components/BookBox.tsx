@@ -3,7 +3,7 @@ import type { Work } from "@/lib/database";
 import PopularityBar from "./PopularityBar";
 import Star from "./Star";
 
-export default function WorkRow({
+export default function BookBox({
 	work,
 	maxViews,
 	showYear = true,
