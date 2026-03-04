@@ -2,7 +2,7 @@ import Link from "next/link";
 import Container from "@/components/Container";
 import SubTitle from "@/components/SubTitle";
 
-export default async function AboutPage() {
+export default async function ContributePage() {
 	return (
 		<section aria-label="Contributions">
 			<SubTitle>Found a Data Error?</SubTitle>

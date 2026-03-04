@@ -126,7 +126,15 @@ export default async function AboutPage() {
 				<p>A work is any entity in the Wikidata database which:</p>
 				<ul className="list-disc ml-6">
 					<li>
-						Is an <Link href="">instance of (P31)</Link> on of the following:
+						Is an{" "}
+						<Link
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://www.wikidata.org/wiki/Property:P31"
+						>
+							instance of (P31)
+						</Link>{" "}
+						one of the following:
 						<ul className="list-disc ml-6 my-2">
 							<li>
 								<Link
