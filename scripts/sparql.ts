@@ -68,9 +68,10 @@ WHERE
 
 export const WORKS_QUERY = `
 SELECT
-    ?work ?workLabel ?slug 
+    ?work ?workLabel ?slug
     (MIN(?publicationDate) AS ?minPublicationDate)
     (MIN(?formLabel) AS ?formOfCreativeWorkLabel)
+    (MIN(STR(?form)) AS ?formQcode)
 WHERE {
     VALUES ?work {
         {{chunk}}  # Placeholder for chunk of authors

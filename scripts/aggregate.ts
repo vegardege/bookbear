@@ -51,15 +51,22 @@ async function getWorks(
 	dbPath: string,
 ): Promise<Map<string, Work>> {
 	const worksLines = await readCSV(worksPath);
-	const works = worksLines.map((row) => ({
-		qcode: row[0],
-		title: row[1],
-		slug: row[2],
-		publicationDate: row[3] ? formatDate(new Date(row[3])) : undefined,
-		views: 0,
-		notable: false,
-		formOfCreativeWork: row[4],
-	}));
+	const works = worksLines.map((row) => {
+		const formQcodeRaw = row[5];
+		const formOfCreativeWorkQcode = formQcodeRaw
+			? formQcodeRaw.replace("http://www.wikidata.org/entity/", "")
+			: undefined;
+		return {
+			qcode: row[0],
+			title: row[1],
+			slug: row[2],
+			publicationDate: row[3] ? formatDate(new Date(row[3])) : undefined,
+			views: 0,
+			notable: false,
+			formOfCreativeWork: row[4],
+			formOfCreativeWorkQcode,
+		};
+	});
 
 	// Add pageviews from the provided duckdb database
 	const pageviews = await getPageviews(

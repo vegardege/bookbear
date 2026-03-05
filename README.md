@@ -74,7 +74,7 @@ npm run script aggregate /path/to/your/pvduck.duckdb
 
 Each script downloads different pieces of data from Wikidata via [SPARQL](https://en.wikipedia.org/wiki/SPARQL) queries, then the `aggregate` command combines everything with pageview data into `data/database.json`.
 
-**Note:** These scripts can take a while depending on Wikidata's response times. Downloaded files are cached in `data/` for subsequent runs. If you have problems with timeouts, try lowering the chunk size. You can specify offset as well if you want to run the script in separate chunks and combine manually later.
+**Note:** These scripts can take a while depending on Wikidata's response times. Downloaded files are cached in `$XDG_DATA_HOME/bookbear/` for subsequent runs. If you have problems with timeouts, try lowering the chunk size. You can specify offset as well if you want to run the script in separate chunks and combine manually later.
 
 ### Running the Web App
 
@@ -105,7 +105,7 @@ docker build -t bookbear:latest .
 docker run -p 3000:3000 -v ./data:/app/data bookbear:latest
 ```
 
-The database file (`data/database.json`) is changes frequently. Mounting it as a volume means you can update the data without rebuilding the Docker image, and that you can reuse the existing image with your own, adapted database.
+The database file (`data/database.json`) changes frequently. Mounting it as a volume means you can update the data without rebuilding the Docker image, and that you can reuse the existing image with your own, adapted database.
 
 ## Development
 
@@ -148,6 +148,6 @@ npm run script <command> [options]
 
 This is a personal project, but contributions are welcome!
 
-The best way to contribute improving the [Wikidata database](https://www.wikidata.org/) itself. Add missing books, fix author relationships, mark notable works. These improvements benefit everyone using Wikidata.
+The best way to contribute is by improving the [Wikidata database](https://www.wikidata.org/) itself. Add missing books, fix author relationships, mark notable works. These improvements benefit everyone using Wikidata.
 
 Suggestions to improve SPARQL queries, UI improvements, and bug fixes are appreciated. Feel free to open issues or pull requests.
