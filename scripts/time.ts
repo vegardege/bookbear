@@ -1,4 +1,19 @@
 /**
+ * Extract the publication year from a Wikidata date string such as
+ * "+1984-01-01T00:00:00Z" or "-0399-01-01T00:00:00Z".
+ * Returns undefined if the input is empty or unparseable.
+ */
+export function parseWikidataYear(
+	dateStr: string | undefined,
+): number | undefined {
+	if (!dateStr) return undefined;
+	const datePart = dateStr.split("T")[0]; // "+1984-01-01" or "-0399-01-01"
+	const yearStr = datePart.slice(0, -6); // "+1984" or "-0399"
+	const year = parseInt(yearStr, 10);
+	return Number.isNaN(year) ? undefined : year;
+}
+
+/**
  * Pauses execution for the specified number of seconds.
  */
 export async function sleep(seconds: number): Promise<void> {
