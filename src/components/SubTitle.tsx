@@ -6,12 +6,16 @@ const amiri = Amiri({
 });
 type HeadingProps = {
 	children: React.ReactNode;
+	action?: React.ReactNode;
 };
 
-export default function Heading({ children }: HeadingProps) {
+export default function Heading({ children, action }: HeadingProps) {
 	return (
-		<div className="w-full flex">
-			<h2 className={`${amiri.className} text-3xl my-6 mx-1`}>{children}</h2>
+		<div className="w-full flex items-center mx-1 my-6">
+			<h2 className={`${amiri.className} text-3xl flex-1`}>{children}</h2>
+			{action && (
+				<div className="w-14 flex justify-center items-center">{action}</div>
+			)}
 		</div>
 	);
 }
