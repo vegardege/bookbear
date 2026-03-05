@@ -37,7 +37,7 @@ export default function GenreInfoModal({
 			<button
 				type="button"
 				onClick={() => setIsOpen(true)}
-				className="w-6 h-6 rounded-full bg-bar text-card text-xs flex items-center justify-center hover:opacity-80"
+				className="w-8 h-8 flex items-center justify-center bg-bar text-card text-sm rounded-md shadow-md hover:bg-highlight hover:text-foreground cursor-pointer"
 				aria-label={`About the ${genreName} section`}
 			>
 				?
@@ -58,9 +58,19 @@ export default function GenreInfoModal({
 						aria-label={`About ${genreName}`}
 						className="relative z-10 bg-card rounded-md shadow-lg p-6 max-w-md mx-4"
 					>
-						<h3 className="text-xl font-semibold mb-3">{genreName}</h3>
+						<div className="flex items-center justify-between mb-3">
+							<h3 className="text-xl font-semibold">{genreName}</h3>
+							<button
+								type="button"
+								onClick={() => setIsOpen(false)}
+								className="text-foreground/50 hover:text-foreground cursor-pointer text-lg leading-none"
+								aria-label="Close"
+							>
+								✕
+							</button>
+						</div>
 						<p className="mb-2 text-sm">
-							Works appear here because they are registered on Wikidata as:
+							The works in this list are registered on Wikidata as:
 						</p>
 						<ul className="mb-4 text-sm list-disc list-inside space-y-1">
 							<li>
@@ -133,7 +143,7 @@ export default function GenreInfoModal({
 							</span>
 						</div>
 
-						<div className="flex items-center gap-3 mb-4 text-sm">
+						<div className="flex items-center gap-3 text-sm">
 							<div className="shrink-0 w-12 flex justify-center">
 								<Image
 									src="/star.svg"
@@ -155,14 +165,6 @@ export default function GenreInfoModal({
 								on the author's Wikidata page.
 							</span>
 						</div>
-
-						<button
-							type="button"
-							onClick={() => setIsOpen(false)}
-							className="px-4 py-2 rounded border border-divider text-sm hover:bg-highlight"
-						>
-							Close
-						</button>
 					</div>
 				</div>
 			)}

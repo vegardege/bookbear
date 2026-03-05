@@ -1,15 +1,10 @@
-import { Amiri } from "next/font/google";
 import { notFound } from "next/navigation";
 import BookBox from "@/components/BookBox";
 import Container from "@/components/Container";
 import GenreInfoModal from "@/components/GenreInfoModal";
+import SubTitle from "@/components/SubTitle";
 import Title from "@/components/Title";
 import { getDatabase, type Work } from "@/lib/database";
-
-const amiri = Amiri({
-	subsets: ["latin"],
-	weight: ["400"],
-});
 
 type WorkGroup = {
 	works: Work[];
@@ -73,21 +68,21 @@ export default async function AuthorPage({
 			<Title>{author.name}</Title>
 			{workGroups.length > 0 ? (
 				workGroups.map(([name, group]) => {
+					const label = capitalizeWords(name);
 					return (
 						<div key={name}>
-							<div className="flex items-center my-6 mx-1">
-								<h2 className={`${amiri.className} text-3xl flex-1`}>
-									{capitalizeWords(name)}
-								</h2>
-								<div className="w-14 flex justify-center items-center">
+							<SubTitle
+								action={
 									<GenreInfoModal
 										authorQcode={author.qcode}
 										authorName={author.name}
-										genreName={capitalizeWords(name)}
+										genreName={label}
 										formQcode={group.qcode}
 									/>
-								</div>
-							</div>
+								}
+							>
+								{label}
+							</SubTitle>
 							<section aria-label={name} className="mx-1">
 								<Container padding={false}>
 									<ul className="min-w-full divide-y divide-divider divide-solid">
