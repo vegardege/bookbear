@@ -18,6 +18,7 @@ export type Work = {
 	views?: number;
 	notable: boolean;
 	formOfCreativeWork?: string;
+	formOfCreativeWorkQcode?: string;
 };
 
 const database = new Map<string, Author>();

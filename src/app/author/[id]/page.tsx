@@ -1,29 +1,40 @@
+import { Amiri } from "next/font/google";
 import { notFound } from "next/navigation";
 import BookBox from "@/components/BookBox";
 import Container from "@/components/Container";
-import SubTitle from "@/components/SubTitle";
+import GenreInfoModal from "@/components/GenreInfoModal";
 import Title from "@/components/Title";
 import { getDatabase, type Work } from "@/lib/database";
+
+const amiri = Amiri({
+	subsets: ["latin"],
+	weight: ["400"],
+});
+
+type WorkGroup = {
+	works: Work[];
+	qcode?: string;
+};
 
 /**
  * Group works by their form of creative work and sort them by the number
  * of works in each group.
  */
-function groupAndSortWorks(works: Work[]): Map<string, Work[]> {
-	const groups = new Map<string, Work[]>();
+function groupAndSortWorks(works: Work[]): Map<string, WorkGroup> {
+	const groups = new Map<string, WorkGroup>();
 
 	for (const work of works) {
 		const key = work.formOfCreativeWork || "Other";
 		if (!groups.has(key)) {
-			groups.set(key, []);
+			groups.set(key, { works: [], qcode: work.formOfCreativeWorkQcode });
 		}
-		groups.get(key)?.push(work);
+		groups.get(key)?.works.push(work);
 	}
 
 	// Sort entries by number of views in group
 	const sorted = [...groups.entries()].sort((a, b) => {
-		const aViews = a[1].reduce((sum, work) => sum + (work.views || 0), 0);
-		const bViews = b[1].reduce((sum, work) => sum + (work.views || 0), 0);
+		const aViews = a[1].works.reduce((sum, work) => sum + (work.views || 0), 0);
+		const bViews = b[1].works.reduce((sum, work) => sum + (work.views || 0), 0);
 
 		return bViews - aViews;
 	});
@@ -61,14 +72,26 @@ export default async function AuthorPage({
 		<section aria-label="Author">
 			<Title>{author.name}</Title>
 			{workGroups.length > 0 ? (
-				workGroups.map(([name, works]) => {
+				workGroups.map(([name, group]) => {
 					return (
 						<div key={name}>
-							<SubTitle>{capitalizeWords(name)}</SubTitle>
+							<div className="flex items-center my-6 mx-1">
+								<h2 className={`${amiri.className} text-3xl flex-1`}>
+									{capitalizeWords(name)}
+								</h2>
+								<div className="w-14 flex justify-center items-center">
+									<GenreInfoModal
+										authorQcode={author.qcode}
+										authorName={author.name}
+										genreName={capitalizeWords(name)}
+										formQcode={group.qcode}
+									/>
+								</div>
+							</div>
 							<section aria-label={name} className="mx-1">
 								<Container padding={false}>
 									<ul className="min-w-full divide-y divide-divider divide-solid">
-										{works.map((work) => (
+										{group.works.map((work) => (
 											<BookBox
 												key={work.qcode}
 												work={work}
