@@ -31,6 +31,7 @@ export default function GenreInfoModal({
 	const formUrl = formQcode
 		? `https://www.wikidata.org/wiki/${formQcode}`
 		: null;
+	const isOther = genreName === "Other";
 
 	return (
 		<>
@@ -49,21 +50,24 @@ export default function GenreInfoModal({
 						type="button"
 						className="absolute inset-0 w-full h-full bg-black/50 cursor-default"
 						onClick={() => setIsOpen(false)}
-						aria-label="Close"
 						tabIndex={-1}
 					/>
 					<div
 						role="dialog"
 						aria-modal="true"
-						aria-label={`About ${genreName}`}
+						aria-labelledby="genre-modal-title"
 						className="relative z-10 bg-card rounded-md shadow-lg p-6 max-w-md mx-4"
 					>
 						<div className="flex items-center justify-between mb-3">
-							<h3 className="text-xl font-semibold">{genreName}</h3>
+							<h3 id="genre-modal-title" className="text-xl font-semibold">
+								{genreName}
+							</h3>
 							<button
 								type="button"
+								// biome-ignore lint/a11y/noAutofocus: moves focus into modal for keyboard users
+								autoFocus
 								onClick={() => setIsOpen(false)}
-								className="text-foreground/50 hover:text-foreground cursor-pointer text-lg leading-none"
+								className="text-foreground/50 hover:text-foreground cursor-pointer text-lg leading-none focus:outline-none"
 								aria-label="Close"
 							>
 								✕
@@ -99,7 +103,19 @@ export default function GenreInfoModal({
 							</li>
 							<li>
 								and{" "}
-								{formUrl ? (
+								{isOther ? (
+									<>
+										no{" "}
+										<a
+											href="https://www.wikidata.org/wiki/Property:P7937"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											form of creative work (P7937)
+										</a>{" "}
+										recorded
+									</>
+								) : formUrl ? (
 									<>
 										<a
 											href="https://www.wikidata.org/wiki/Property:P7937"
@@ -150,7 +166,7 @@ export default function GenreInfoModal({
 									alt="star"
 									width={14}
 									height={14}
-									aria-hidden
+									aria-hidden={true}
 								/>
 							</div>
 							<span>

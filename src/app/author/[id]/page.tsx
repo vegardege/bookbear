@@ -83,7 +83,7 @@ export default async function AuthorPage({
 							>
 								{label}
 							</SubTitle>
-							<section aria-label={name} className="mx-1">
+							<section aria-label={label} className="mx-1">
 								<Container padding={false}>
 									<ul className="min-w-full divide-y divide-divider divide-solid">
 										{group.works.map((work) => (
