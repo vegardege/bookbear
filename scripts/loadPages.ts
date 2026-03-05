@@ -5,6 +5,8 @@ import { createWriteStream } from "node:fs";
 import { sleep } from "./time";
 import { executeSparqlQuery, handleWikidataError } from "./wikidata";
 
+const MAX_RETRIES = 5;
+
 /**
  * Loads a single set of pages from Wikidata.
  */
@@ -40,6 +42,7 @@ async function* loadAllPages(
 	console.log("Loading from Wikidata");
 
 	let offset = 0;
+	let retries = 0;
 
 	while (true) {
 		try {
@@ -52,11 +55,21 @@ async function* loadAllPages(
 			}
 			yield data;
 			offset += limit;
+			retries = 0;
 
 			await sleep(5);
 		} catch (error) {
+			retries += 1;
+			if (retries > MAX_RETRIES) {
+				throw new Error(
+					`Failed after ${MAX_RETRIES} retries at offset ${offset}`,
+					{ cause: error },
+				);
+			}
 			const retryAfter = await handleWikidataError(error);
-			console.log(`- Too many requests, waiting for ${retryAfter} seconds`);
+			console.log(
+				`- Transient error (attempt ${retries}/${MAX_RETRIES}), retrying in ${retryAfter}s`,
+			);
 			await sleep(retryAfter);
 		}
 	}
