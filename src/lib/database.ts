@@ -14,7 +14,7 @@ export type Work = {
 	qcode: string;
 	title: string;
 	slug?: string;
-	publicationDate?: string;
+	publicationYear?: number;
 	views?: number;
 	notable: boolean;
 	formOfCreativeWork?: string;
@@ -62,13 +62,13 @@ function loadDatabase() {
  * at the end of the list.
  */
 function compareWorks(a: Work, b: Work): number {
-	if (a.publicationDate && b.publicationDate) {
-		return a.publicationDate.localeCompare(b.publicationDate);
+	if (a.publicationYear != null && b.publicationYear != null) {
+		return a.publicationYear - b.publicationYear;
 	}
-	if (a.publicationDate) {
+	if (a.publicationYear != null) {
 		return -1;
 	}
-	if (b.publicationDate) {
+	if (b.publicationYear != null) {
 		return 1;
 	}
 	return 0;

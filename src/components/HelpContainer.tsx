@@ -8,7 +8,7 @@ const exampleWork = {
 	title: "Blood Meridian",
 	qcode: "Q581426",
 	slug: "Blood_Meridian",
-	publicationDate: "1985-02-01",
+	publicationYear: 1985,
 	views: 1000,
 	notable: true,
 	formOfCreativeWork: "novel",
