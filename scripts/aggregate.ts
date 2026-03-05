@@ -7,6 +7,7 @@ import { writeFile } from "node:fs/promises";
 import { DuckDBConnection, DuckDBInstance, listValue } from "@duckdb/node-api";
 import type { Author, Work } from "@/lib/database";
 import { readCSV } from "./storage";
+import { parseWikidataYear } from "./time";
 
 /**
  * Read author structs from the metadata CSV file.
@@ -59,7 +60,7 @@ async function getWorks(
 			qcode: row[0],
 			title: row[1],
 			slug: row[2],
-			publicationYear: row[3] ? parseInt(row[3], 10) || undefined : undefined,
+			publicationYear: parseWikidataYear(row[3]),
 			views: 0,
 			notable: false,
 			formOfCreativeWork: row[4],
