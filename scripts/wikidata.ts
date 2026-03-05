@@ -1,3 +1,4 @@
+const WIKIDATA_DEFAULT_RETRY_AFTER = 60; // seconds
 const WIKIDATA_API_URL = "https://query.wikidata.org/sparql";
 const WIKIDATA_API_HEADERS = {
 	"Content-Type": "application/sparql-query",
@@ -6,19 +7,19 @@ const WIKIDATA_API_HEADERS = {
 };
 
 /**
- * Error thrown when the API returns a 429 Too Many Requests status code.
- * When received, the caller should wait the specified time before retrying.
+ * Error thrown for transient API failures (429, 5xx) that should be retried
+ * after waiting the specified number of seconds.
  */
-class TooManyRequestsError extends Error {
+class RetryableError extends Error {
 	retryAfter: number;
 
-	constructor(retryAfter: number) {
-		super(`Too many requests, retry after ${retryAfter} seconds`);
-		this.name = "NumericError";
+	constructor(message: string, retryAfter: number) {
+		super(message);
+		this.name = "RetryableError";
 		this.retryAfter = retryAfter;
 
 		// Required for instanceof to work correctly in transpiled JS
-		Object.setPrototypeOf(this, TooManyRequestsError.prototype);
+		Object.setPrototypeOf(this, RetryableError.prototype);
 	}
 }
 
@@ -34,8 +35,17 @@ export async function executeSparqlQuery(query: string): Promise<string> {
 		body: query,
 	});
 	if (res.status === 429) {
-		const retryAfter = parseInt(res.headers.get("retry-after") ?? "0", 10);
-		throw new TooManyRequestsError(retryAfter);
+		const retryAfter = parseInt(
+			res.headers.get("retry-after") ?? String(WIKIDATA_DEFAULT_RETRY_AFTER),
+			10,
+		);
+		throw new RetryableError(`Too many requests (429)`, retryAfter);
+	}
+	if (res.status >= 500) {
+		throw new RetryableError(
+			`Server error: ${res.status} ${res.statusText}`,
+			WIKIDATA_DEFAULT_RETRY_AFTER,
+		);
 	}
 	if (!res.ok) {
 		throw new Error(`Error executing SPARQL query: ${res.statusText}`);
@@ -46,13 +56,12 @@ export async function executeSparqlQuery(query: string): Promise<string> {
 /**
  * Handles errors from the Wikidata API.
  *
- * If the error is a TooManyRequestsError, it returns the number of seconds to
+ * If the error is a RetryableError, it returns the number of seconds to
  * wait. Otherwise, it re-throws the error.
  */
 export async function handleWikidataError(error: unknown): Promise<number> {
-	if (error instanceof TooManyRequestsError) {
+	if (error instanceof RetryableError) {
 		return error.retryAfter + 1; // Wait a bit longer than requested
-	} else {
-		throw error;
 	}
+	throw error;
 }
