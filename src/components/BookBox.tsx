@@ -25,13 +25,16 @@ export default function BookBox({
 				className={`flex flex-row items-center py-3 no-underline hover:bg-highlight hover:cursor-pointer`}
 			>
 				{showYear && (
-					<div
-						className="flex flex-row w-16 justify-center text-sm"
-						title={work.publicationDate}
-					>
-						<time dateTime={work.publicationDate?.substring(0, 4) || ""}>
-							{work.publicationDate?.substring(0, 4) || "–"}
-						</time>
+					<div className="flex flex-row w-16 justify-center text-sm">
+						{work.publicationYear != null ? (
+							<time dateTime={String(work.publicationYear)}>
+								{work.publicationYear < 0
+									? `${Math.abs(work.publicationYear)} BCE`
+									: work.publicationYear}
+							</time>
+						) : (
+							<span>–</span>
+						)}
 					</div>
 				)}
 				<div className="flex-1 flex flex-col gap-2 justify-center mx-1">
