@@ -35,3 +35,13 @@ jobs:
           push: true
           tags: vegardege/bookbear:latest
           platforms: linux/amd64
+
+      - name: Build and push pipeline image
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.pipeline
+          push: true
+          tags: vegardege/bookbear-pipeline:latest
+          platforms: linux/amd64
