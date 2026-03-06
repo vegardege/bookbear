@@ -21,6 +21,7 @@ export type Work = {
 	formOfCreativeWorkQcode?: string;
 };
 
+const DB_PATH = path.join(process.cwd(), "data", "database.json");
 const database = new Map<string, Author>();
 
 /**
@@ -29,7 +30,7 @@ const database = new Map<string, Author>();
 export function getDatabase(): Map<string, Author> {
 	if (database.size === 0) {
 		loadDatabase();
-		sortWorks();
+		watchDatabase();
 	}
 	return database;
 }
@@ -41,20 +42,37 @@ export function getDatabase(): Map<string, Author> {
  * an actual backend db. We just load it in memory and keep it there.
  */
 function loadDatabase() {
-	const dataPath = path.join(process.cwd(), "data", "database.json");
-	if (!fs.existsSync(dataPath)) {
+	if (!fs.existsSync(DB_PATH)) {
 		throw new Error("Database file not found");
 	}
-	const data = fs.readFileSync(dataPath, { encoding: "utf-8" });
+	const data = fs.readFileSync(DB_PATH, { encoding: "utf-8" });
 	let authors: Author[];
 	try {
 		authors = JSON.parse(data) as Author[];
 	} catch {
 		throw new Error("Database file is corrupted or contains invalid JSON");
 	}
+	if (authors.length === 0) {
+		throw new Error("Database file is empty");
+	}
+	database.clear();
 	for (const author of authors) {
 		database.set(author.slug, author);
 	}
+	sortWorks();
+}
+
+/**
+ * Watch the database file for changes and reload in-memory data when it's updated.
+ */
+function watchDatabase() {
+	fs.watchFile(DB_PATH, { interval: 5000 }, () => {
+		try {
+			loadDatabase();
+		} catch (err) {
+			console.error("Failed to reload database, keeping stale data:", err);
+		}
+	});
 }
 
 /**
