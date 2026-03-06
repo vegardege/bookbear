@@ -188,6 +188,28 @@ program
 	});
 
 program
+	.command("refresh <dbPath> [outputPath]")
+	.description(
+		"Fetch all Wikidata, aggregate with pageviews, update the database, and clean up",
+	)
+	.option("-c, --chunk-size <size>", "Number of results per chunk", "10000")
+	.action(
+		async (
+			dbPath: string,
+			outputPath: string | undefined,
+			options: { chunkSize: string },
+		) => {
+			const chunkSize = validatePosInt(options.chunkSize, "Chunk size");
+			await authorships(100000);
+			await notables(100000);
+			await authors(0, chunkSize);
+			await works(0, chunkSize);
+			await aggregate(dbPath, outputPath);
+			await cleanAllGroups();
+		},
+	);
+
+program
 	.command("clean")
 	.description("Delete all old data files, keeping only the most recent ones")
 	.action(async () => {

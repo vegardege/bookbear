@@ -60,6 +60,13 @@ This database aggregates Wikipedia pageview data to measure how popular each wor
 # Install dependencies first
 npm install
 
+# Run the full pipeline in one command
+npm run script refresh /path/to/your/pvduck.duckdb data/database.json
+```
+
+Or run each step manually:
+
+```bash
 # Download raw data from Wikidata
 npm run script authorships  # Author-work relationships
 npm run script notables     # Notable work indicators
@@ -69,10 +76,10 @@ npm run script authors      # Author details (names, descriptions)
 npm run script works        # Work details (titles, publication dates)
 
 # Combine everything into one JSON file
-npm run script aggregate /path/to/your/pvduck.duckdb
+npm run script aggregate /path/to/your/pvduck.duckdb data/database.json
 ```
 
-Each script downloads different pieces of data from Wikidata via [SPARQL](https://en.wikipedia.org/wiki/SPARQL) queries, then the `aggregate` command combines everything with pageview data into `data/database.json`.
+Each script downloads different pieces of data from Wikidata via [SPARQL](https://en.wikipedia.org/wiki/SPARQL) queries, then the `aggregate` command combines everything with pageview data and writes to the output path.
 
 **Note:** These scripts can take a while depending on Wikidata's response times. Downloaded files are cached in `$XDG_DATA_HOME/bookbear/` for subsequent runs. If you have problems with timeouts, try lowering the chunk size. You can specify offset as well if you want to run the script in separate chunks and combine manually later.
 
@@ -132,16 +139,17 @@ The data pipeline is managed through CLI scripts (see `scripts/cli.ts`):
 npm run script <command> [options]
 
 # Available commands:
-#   authorships      Download author-work relationships
-#   notables         Download notable work indicators
-#   authors          Download author metadata
-#   works            Download work metadata
-#   aggregate <db>   Combine all data with pageviews
-#   clean            Delete old data files (keeps most recent)
+#   refresh <db> [out]   Full pipeline: fetch, aggregate, clean
+#   authorships          Download author-work relationships
+#   notables             Download notable work indicators
+#   authors              Download author metadata
+#   works                Download work metadata
+#   aggregate <db> [out] Combine all data with pageviews
+#   clean                Delete old data files (keeps most recent)
 
 # Options:
 #   --offset <n>     Skip first n results (default: 0)
-#   --chunk <n>      Fetch n results per request (default: 50000)
+#   --chunk-size <n> Fetch n results per request (default: 10000)
 ```
 
 ## Contributing
