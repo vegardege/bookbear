@@ -183,12 +183,12 @@ export async function aggregateToCsv(
 	console.log(`- Notables:    ${notablesPath}`);
 	console.log(`- Pageviews:   ${dbPath}`);
 
-	const [authorships, notables, authors, works] = await Promise.all([
+	const [authorships, notables] = await Promise.all([
 		readCSV(authorshipsPath),
 		getNotables(notablesPath),
-		getAuthors(authorsPath, dbPath),
-		getWorks(worksPath, dbPath),
 	]);
+	const authors = await getAuthors(authorsPath, dbPath);
+	const works = await getWorks(worksPath, dbPath);
 	await hydrateAuthorsWithWorks(authorships, notables, authors, works);
 	await writeFile(
 		filename,

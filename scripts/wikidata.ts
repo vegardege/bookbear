@@ -61,7 +61,7 @@ export async function executeSparqlQuery(query: string): Promise<string> {
  */
 export async function handleWikidataError(error: unknown): Promise<number> {
 	if (error instanceof RetryableError) {
-		return error.retryAfter + 1; // Wait a bit longer than requested
+		return error.retryAfter * 1.5; // Wait a bit longer than requested
 	}
 	throw error;
 }

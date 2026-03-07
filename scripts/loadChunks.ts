@@ -49,7 +49,7 @@ async function* loadAllChunks(
 			yield data;
 			offset += chunkSize;
 
-			await sleep(5);
+			await sleep(10);
 		} catch (error) {
 			const retryAfter = await handleWikidataError(error);
 			console.log(`- Too many requests, waiting for ${retryAfter} seconds`);

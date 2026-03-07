@@ -57,7 +57,7 @@ async function* loadAllPages(
 			offset += limit;
 			retries = 0;
 
-			await sleep(5);
+			await sleep(10);
 		} catch (error) {
 			retries += 1;
 			if (retries > MAX_RETRIES) {
