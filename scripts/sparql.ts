@@ -46,9 +46,11 @@ WHERE
         {{chunk}}  # Placeholder for chunk of authors
     }
 
-    # Get the author's label (name)
-    ?author rdfs:label ?authorLabel .
-    FILTER(LANG(?authorLabel) = "en")
+    # Get the author's label, preferring English over the multilingual default (mul)
+    OPTIONAL { ?author rdfs:label ?enLabel . FILTER(LANG(?enLabel) = "en") }
+    OPTIONAL { ?author rdfs:label ?mulLabel . FILTER(LANG(?mulLabel) = "mul") }
+    BIND(COALESCE(?enLabel, ?mulLabel) AS ?authorLabel)
+    FILTER(BOUND(?authorLabel))
 
     # Get the English Wikipedia page for the author
     ?article schema:about ?author ;
@@ -77,9 +79,11 @@ WHERE {
         {{chunk}}  # Placeholder for chunk of authors
     }
 
-    # Get the work's label (name)
-    ?work rdfs:label ?workLabel.
-    FILTER(LANG(?workLabel) = "en")
+    # Get the work's label, preferring English over the multilingual default (mul)
+    OPTIONAL { ?work rdfs:label ?enLabel . FILTER(LANG(?enLabel) = "en") }
+    OPTIONAL { ?work rdfs:label ?mulLabel . FILTER(LANG(?mulLabel) = "mul") }
+    BIND(COALESCE(?enLabel, ?mulLabel) AS ?workLabel)
+    FILTER(BOUND(?workLabel))
 
     # Get the publication date of the work if it exists
     OPTIONAL {
