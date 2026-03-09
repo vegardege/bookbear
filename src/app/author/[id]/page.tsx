@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import BookBox from "@/components/BookBox";
+import BookList from "@/components/BookList";
 import Container from "@/components/Container";
 import GenreInfoModal from "@/components/GenreInfoModal";
 import SubTitle from "@/components/SubTitle";
@@ -85,15 +85,7 @@ export default async function AuthorPage({
 							</SubTitle>
 							<section aria-label={label} className="mx-1">
 								<Container padding={false}>
-									<ul className="min-w-full divide-y divide-divider divide-solid">
-										{group.works.map((work) => (
-											<BookBox
-												key={work.qcode}
-												work={work}
-												maxViews={maxViews}
-											/>
-										))}
-									</ul>
+									<BookList works={group.works} maxViews={maxViews} />
 								</Container>
 							</section>
 						</div>
