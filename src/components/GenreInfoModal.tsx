@@ -74,72 +74,51 @@ export default function GenreInfoModal({
 							</button>
 						</div>
 						<p className="mb-2 text-sm">
-							The works in this list are registered on Wikidata as:
+							Works are included because their Wikidata entry has:
 						</p>
 						<ul className="mb-4 text-sm list-disc list-inside space-y-1">
 							<li>
-								A{" "}
 								<a
 									href="https://www.wikidata.org/wiki/Property:P31"
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									literary or dramatic work (P31)
-								</a>
+									instance of (P31)
+								</a>{" "}
+								set to a literary or dramatic work
 							</li>
 							<li>
-								with{" "}
-								<a href={authorUrl} target="_blank" rel="noopener noreferrer">
-									{authorName} ({authorQcode})
-								</a>{" "}
-								as{" "}
 								<a
 									href="https://www.wikidata.org/wiki/Property:P50"
 									target="_blank"
 									rel="noopener noreferrer"
 								>
 									author (P50)
+								</a>{" "}
+								set to{" "}
+								<a href={authorUrl} target="_blank" rel="noopener noreferrer">
+									{authorName} ({authorQcode})
 								</a>
 							</li>
 							<li>
-								and{" "}
+								<a
+									href="https://www.wikidata.org/wiki/Property:P7937"
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									form of creative work (P7937)
+								</a>{" "}
 								{isOther ? (
-									<>
-										no{" "}
-										<a
-											href="https://www.wikidata.org/wiki/Property:P7937"
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											form of creative work (P7937)
-										</a>{" "}
-										recorded
-									</>
+									<>not recorded</>
 								) : formUrl ? (
 									<>
-										<a
-											href="https://www.wikidata.org/wiki/Property:P7937"
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											form of creative work (P7937)
-										</a>{" "}
 										set to{" "}
 										<a href={formUrl} target="_blank" rel="noopener noreferrer">
 											{genreName} ({formQcode})
 										</a>
 									</>
 								) : (
-									<>
-										<a
-											href="https://www.wikidata.org/wiki/Property:P7937"
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											form of creative work (P7937)
-										</a>{" "}
-										set to {genreName}
-									</>
+									<>set to {genreName}</>
 								)}
 							</li>
 						</ul>
