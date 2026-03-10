@@ -19,7 +19,7 @@ export default function BookList({
 					work={work}
 					maxViews={maxViews}
 					isOpen={openQcode === work.qcode}
-					onToggle={() =>
+					onToggleAction={() =>
 						setOpenQcode((prev) => (prev === work.qcode ? null : work.qcode))
 					}
 				/>

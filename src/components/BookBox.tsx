@@ -49,19 +49,19 @@ export default function BookBox({
 	maxViews,
 	showYear = true,
 	isOpen = false,
-	onToggle,
+	onToggleAction,
 }: {
 	work: Work;
 	maxViews: number;
 	showYear?: boolean;
 	isOpen?: boolean;
-	onToggle?: () => void;
+	onToggleAction?: () => void;
 }) {
 	return (
 		<li>
 			<button
 				type="button"
-				onClick={onToggle}
+				onClick={onToggleAction}
 				className="flex flex-row items-center py-3 w-full text-left no-underline hover:bg-highlight hover:cursor-pointer"
 			>
 				{showYear && (
