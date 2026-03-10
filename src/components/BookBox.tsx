@@ -105,24 +105,14 @@ export default function BookBox({
 							</a>
 						</>
 					) : (
-						<>
-							<a
-								href={`https://en.wikipedia.org/w/index.php?title=${encodeURIComponent(work.title)}&action=edit`}
-								target="_blank"
-								rel="noopener noreferrer"
-								className={shelfLinkClass}
-							>
-								<WikipediaIcon /> Create Wikipedia article
-							</a>
-							<a
-								href={`https://www.wikidata.org/wiki/${work.qcode}`}
-								target="_blank"
-								rel="noopener noreferrer"
-								className={shelfLinkClass}
-							>
-								<WikidataIcon /> Wikidata
-							</a>
-						</>
+						<a
+							href={`https://www.wikidata.org/wiki/${work.qcode}`}
+							target="_blank"
+							rel="noopener noreferrer"
+							className={shelfLinkClass}
+						>
+							<WikidataIcon /> Wikidata
+						</a>
 					)}
 				</div>
 			)}
