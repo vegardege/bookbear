@@ -38,7 +38,7 @@ export default function GenreInfoModal({
 			<button
 				type="button"
 				onClick={() => setIsOpen(true)}
-				className="flex self-center items-center justify-center text-foreground hover:bg-highlight cursor-pointer text-2xl font-light leading-none px-2 py-1 rounded"
+				className="flex items-center justify-center text-foreground hover:bg-highlight cursor-pointer text-2xl font-light leading-none h-full aspect-square rounded"
 				aria-label={`About the ${genreName} section`}
 			>
 				?
