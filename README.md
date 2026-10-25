@@ -41,7 +41,7 @@ Want to build everything from scratch? Here's how.
 
 ### Prerequisites
 
-- **Node.js** 20+ (the project uses Node.js 25 in Docker)
+- **Node.js** 22.12+ (the project uses Node.js 26, see `.nvmrc`)
 - **npm** (comes with Node.js)
 - Basic familiarity with command line
 
