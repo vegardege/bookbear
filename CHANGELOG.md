@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-10-28
+
+### Added
+
+- Explicit Wikidata and Wikipedia links on author pages
+- Database file is watched and reloaded automatically when it changes, without restarting the server
+- `refresh` command in data pipeline to fetch, aggregate, and clean up in one go
+- Add separate Docker image for the data pipeline
+- Labels fall back to `mul` when no English label exists in Wikidata
+
+### Changed
+
+- Upgraded Node.js from 25 to 26, plus all dependencies and Github Actions
+- More conservative rate limiting in the Wikidata refresh process
+- Help modal trigger on author pages is more subtle, with a bigger click area
+
+### Removed
+
+- "Create Wikipedia article" button on works without a Wikipedia page
+
+### Fixed
+
+- Moderate severity vulnerability in transitive dependency `baseline-browser-mapping`
+
 ## [1.4.0] - 2026-03-05
 
 ### Added
