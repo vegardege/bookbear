@@ -116,7 +116,7 @@ docker build -t bookbear:latest .
 docker run -p 3000:3000 -v ./data:/app/data bookbear:latest
 ```
 
-The database file (`data/database.json`) changes frequently. Mounting it as a volume means you can update the data without rebuilding the Docker image, and that you can reuse the existing image with your own, adapted database.
+The database file (`data/database.json`) changes frequently. Mounting it as a volume means you can update the data without rebuilding the Docker image (the running app reloads the file automatically), and that you can reuse the existing image with your own, adapted database.
 
 ## Development
 
@@ -133,6 +133,8 @@ npm run lint:fix     # Auto-fix lint issues
 
 npm run format       # Format only
 npm run format:fix   # Auto-fix formatting
+
+npm run typecheck    # TypeScript type check
 ```
 
 ### CLI Scripts
@@ -151,9 +153,13 @@ npm run script <command> [options]
 #   aggregate <db> [out] Combine all data with pageviews
 #   clean                Delete old data files (keeps most recent)
 
-# Options:
-#   --offset <n>     Skip first n results (default: 0)
-#   --chunk-size <n> Fetch n results per request (default: 10000)
+# Options (put them after `--` so npm passes them on):
+#   --chunk-size <n> Fetch n results per request
+#                    (authorships, notables: 100000; authors, works, refresh: 10000)
+#   --offset <n>     Skip first n results (authors, works; default: 0)
+#
+# Example:
+#   npm run script -- works --chunk-size 5000
 ```
 
 ## Contributing
