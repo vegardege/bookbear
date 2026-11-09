@@ -1,5 +1,5 @@
 import Fuse, { type FuseResult } from "fuse.js";
-import { getDatabase } from "@/lib/database";
+import { getDatabase, getDatabaseVersion } from "@/lib/database";
 
 interface Searchable {
 	name: string;
@@ -15,10 +15,11 @@ export interface SearchResult extends Searchable {
 /**
  * The Fuse instance used for searching.
  *
- * This is lazily initialized to avoid loading the database on every request,
- * but is kept in memory for the lifetime of the process once indexed.
+ * This is lazily initialized to avoid indexing on every request, and rebuilt
+ * whenever the database is reloaded so new authors become searchable.
  */
 let fuse: Fuse<Searchable> | undefined;
+let fuseVersion = -1;
 
 /**
  * Search for an author by name.
@@ -34,8 +35,10 @@ export function search(
 	limit: number,
 	offset: number,
 ): SearchResult[] {
-	if (!fuse) {
+	const version = getDatabaseVersion();
+	if (!fuse || fuseVersion !== version) {
 		fuse = indexSearch();
+		fuseVersion = version;
 	}
 	return fuse
 		.search(query)

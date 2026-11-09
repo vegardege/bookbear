@@ -23,6 +23,7 @@ export type Work = {
 
 const DB_PATH = path.join(process.cwd(), "data", "database.json");
 const database = new Map<string, Author>();
+let databaseVersion = 0;
 
 /**
  * Get the cached database of authors and works.
@@ -33,6 +34,16 @@ export function getDatabase(): Map<string, Author> {
 		watchDatabase();
 	}
 	return database;
+}
+
+/**
+ * A counter that increases every time the database is (re)loaded.
+ *
+ * Use this to invalidate data derived from the database, like search indexes.
+ */
+export function getDatabaseVersion(): number {
+	getDatabase();
+	return databaseVersion;
 }
 
 /**
@@ -60,6 +71,7 @@ function loadDatabase() {
 		database.set(author.slug, author);
 	}
 	sortWorks();
+	databaseVersion++;
 }
 
 /**
