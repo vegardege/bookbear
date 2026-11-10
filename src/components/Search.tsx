@@ -30,12 +30,24 @@ type MenuItem = ResultItem | ActionItem;
 export default function Search() {
 	const [items, setItems] = React.useState<MenuItem[]>([]);
 	const router = useRouter();
+	const controllerRef = React.useRef<AbortController | null>(null);
+	const inputRef = React.useRef("");
 
 	const fetchSearchResults = React.useCallback((query: string) => {
+		// The input changed (or was cleared) while we waited for the debounce
+		if (query !== inputRef.current) {
+			return;
+		}
+
+		// Cancel any in-flight request so stale results can't overwrite new ones
+		controllerRef.current?.abort();
+		const controller = new AbortController();
+		controllerRef.current = controller;
+
 		const qs = new URLSearchParams();
 		qs.set("q", query);
 		qs.set("limit", "5");
-		fetch(`/api/search?${qs.toString()}`)
+		fetch(`/api/search?${qs.toString()}`, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error("Search failed");
@@ -67,6 +79,10 @@ export default function Search() {
 				setItems(menuItems);
 			})
 			.catch(() => {
+				// Superseded by a newer query, not an error
+				if (controller.signal.aborted) {
+					return;
+				}
 				// Show error action on failure
 				setItems([
 					{
@@ -95,7 +111,9 @@ export default function Search() {
 			return item.type === "result" ? item.data.name : item.label;
 		},
 		onInputValueChange({ inputValue }) {
+			inputRef.current = inputValue ?? "";
 			if (!inputValue) {
+				controllerRef.current?.abort();
 				setItems([]);
 				return;
 			}
