@@ -22,5 +22,9 @@ export async function GET(request: NextRequest) {
 
 	const results = search(query, limit, offset);
 
-	return NextResponse.json(results);
+	// Results only change when the database is reloaded, so let browsers (and
+	// any CDN in front of the site) reuse them for a few minutes.
+	return NextResponse.json(results, {
+		headers: { "Cache-Control": "public, max-age=60" },
+	});
 }
