@@ -3,12 +3,13 @@ import { getDatabase, getDatabaseVersion } from "@/lib/database";
 
 interface Searchable {
 	name: string;
+	normalizedName: string;
 	description: string;
 	slug: string;
 	views: number;
 }
 
-export interface SearchResult extends Searchable {
+export interface SearchResult extends Omit<Searchable, "normalizedName"> {
 	score: number;
 }
 
@@ -62,6 +63,7 @@ function indexSearch(): Fuse<Searchable> {
 
 	const searchResults = authors.map((author) => ({
 		name: author.name,
+		normalizedName: normalize(author.name),
 		description: author.description,
 		slug: author.slug,
 		views: author.views,
@@ -71,8 +73,20 @@ function indexSearch(): Fuse<Searchable> {
 		keys: ["name"],
 		includeScore: true,
 		ignoreLocation: true,
+		ignoreDiacritics: true,
 		threshold: 0.2,
 	});
+}
+
+/**
+ * Lowercase and strip diacritics, so "Brontë" and "bronte" compare equal.
+ */
+function normalize(text: string): string {
+	return text
+		.normalize("NFD")
+		.replace(/\p{Diacritic}/gu, "")
+		.toLowerCase()
+		.trim();
 }
 
 /**
@@ -85,7 +99,7 @@ function indexSearch(): Fuse<Searchable> {
 function sortResults(
 	query: string,
 ): (a: FuseResult<Searchable>, b: FuseResult<Searchable>) => number {
-	query = query.toLowerCase().trim();
+	query = normalize(query);
 	return (a: FuseResult<Searchable>, b: FuseResult<Searchable>) => {
 		// First, we sort out the possible undefined scores
 		if (a.score === undefined && b.score === undefined) {
@@ -99,8 +113,8 @@ function sortResults(
 		}
 
 		// Prefer perfect prefixes
-		const aName = a.item.name.toLowerCase();
-		const bName = b.item.name.toLowerCase();
+		const aName = a.item.normalizedName;
+		const bName = b.item.normalizedName;
 		if (aName.startsWith(query) && !bName.startsWith(query)) {
 			return -1;
 		}
